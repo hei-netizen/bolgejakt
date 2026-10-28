@@ -1,0 +1,1063 @@
+<!doctype html>
+<html lang="nb">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Bølgejakt">
+<meta name="theme-color" content="#0f2a3d">
+<title>Bølgejakt</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sjøkart-estetikk. Ett «beste valg» øverst, deretter rangert liste med 3-døgns stripe per spot. */
+:root{
+  --bg:#f3f7f9; --surface:#ffffff; --shallow:#d7e9f2; --line:#c9d8e0;
+  --ink:#0f2a3d; --muted:#5a7183; --accent:#a3146f;
+  --s0:#b9c4cb; --s1:#8fb3c9; --s2:#2f9a9a; --s3:#2f8f4e; --s4:#a3146f;
+  --w0:#eef3f6; --w1:#d5e9f4; --w2:#acd8ec; --w3:#7fcac3; --w4:#a3d67f; --w5:#f3d65e; --w6:#f39a5c;
+  --off:#2f9a55; --cross:#d9a520; --on:#cf4a45; --calm:#8aa7b5; --star:#e2a400; --night:#e4ebef;
+  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --body:"Archivo","Helvetica Neue",Arial,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#08151d; --surface:#0f2230; --shallow:#14354a; --line:#1f3a4c;
+  --ink:#d9e7ee; --muted:#86a0b0; --accent:#e765b4;
+  --s0:#3b4b55; --s1:#3f6f8c; --s2:#2fb3b0; --s3:#4cbb6e; --s4:#e765b4;
+  --w0:#11222c; --w1:#163749; --w2:#1b5068; --w3:#1d6763; --w4:#3a7330; --w5:#806b1c; --w6:#8a4520;
+  --off:#3fb46a; --cross:#d9ab2c; --on:#e0605a; --calm:#55707e; --star:#f0b81c; --night:#0b1a23;
+  color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#08151d; --surface:#0f2230; --shallow:#14354a; --line:#1f3a4c;
+  --ink:#d9e7ee; --muted:#86a0b0; --accent:#e765b4;
+  --s0:#3b4b55; --s1:#3f6f8c; --s2:#2fb3b0; --s3:#4cbb6e; --s4:#e765b4;
+  --w0:#11222c; --w1:#163749; --w2:#1b5068; --w3:#1d6763; --w4:#3a7330; --w5:#806b1c; --w6:#8a4520;
+  --off:#3fb46a; --cross:#d9ab2c; --on:#e0605a; --calm:#55707e; --star:#f0b81c; --night:#0b1a23;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;
+  padding:max(14px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+.wrap>*{min-width:0}
+header.top{display:grid;gap:10px}
+.toprow{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
+.brand{font-family:var(--display);font-variation-settings:"wdth" 125;font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0}
+.brand span{color:var(--accent)}
+.where{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
+.where b{color:var(--ink);font-weight:600}
+button,select,input{font:inherit;color:inherit}
+.btn{background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:13px}
+.btn:hover{border-color:var(--ink)}
+.btn:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.search{display:flex;gap:8px;min-width:0}
+.search input{flex:1;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
+.search .btn{border-radius:8px}
+
+.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ctl{display:grid;gap:4px;min-width:0}
+.ctl label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.ctl select{appearance:none;-webkit-appearance:none;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;
+  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
+  background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+
+/* Hero */
+.hero{background:var(--ink);color:var(--bg);border-radius:18px;padding:20px;display:grid;gap:14px;position:relative;overflow:hidden}
+.hero::after{content:"";position:absolute;inset:auto -20% -60% -20%;height:120%;pointer-events:none;
+  background:repeating-radial-gradient(circle at 50% 100%,transparent 0 18px,color-mix(in srgb,var(--bg) 7%,transparent) 18px 19px)}
+.hero>*{position:relative;z-index:1}
+.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.12em;opacity:.7}
+.hero-main{display:flex;justify-content:space-between;gap:16px;align-items:flex-end}
+.hero-main>div:first-child{min-width:0}
+.hero h2{font-family:var(--display);font-variation-settings:"wdth" 118;font-weight:800;font-size:clamp(28px,8vw,46px);line-height:.98;margin:2px 0 4px;text-wrap:balance;letter-spacing:-.02em;overflow-wrap:anywhere}
+.hero .region{opacity:.75;font-size:14px}
+.bigscore{text-align:right}
+.bigscore b{display:block;font-family:var(--display);font-variation-settings:"wdth" 70;font-weight:800;font-size:64px;line-height:.85;font-variant-numeric:tabular-nums}
+.bigscore small{font-size:12px;text-transform:uppercase;letter-spacing:.1em;opacity:.8}
+.plan{display:flex;gap:10px;flex-wrap:wrap}
+.chip{background:color-mix(in srgb,var(--bg) 12%,transparent);border-radius:10px;padding:8px 12px;display:grid;gap:1px;min-width:0}
+.chip span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.7}
+.chip b{font-size:16px;font-variant-numeric:tabular-nums}
+.chip.go{background:var(--accent);color:#fff}
+.conds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;border-top:1px solid color-mix(in srgb,var(--bg) 20%,transparent);padding-top:12px}
+.cond span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.65}
+.cond b{font-family:var(--mono);font-weight:500;font-size:14px}
+.cond i{display:block;font-style:normal;font-size:12px;opacity:.8}
+.hero .links{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
+.hero a{color:inherit}
+.hero svg .lbl{fill:currentColor;opacity:.6}
+.note{font-size:13px;opacity:.85;margin:0}
+
+/* Varseltabell */
+.fc{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.fc-head{padding:14px 16px 10px;display:grid;gap:4px}
+.fc-head h3{margin:0;font-family:var(--display);font-variation-settings:"wdth" 112;font-weight:800;font-size:22px;letter-spacing:-.01em}
+.fc-head .sub{font-size:13px;color:var(--muted)}
+.fc-head .links{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
+.fc-head a{color:var(--accent)}
+.fc-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:1px solid var(--line)}
+table.fct{border-collapse:separate;border-spacing:0;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap;width:max-content}
+.fct th,.fct td{padding:4px 2px;text-align:center;min-width:46px;border-bottom:1px solid var(--line)}
+.fct th.lab{position:sticky;left:0;z-index:2;background:var(--surface);text-align:left;padding:4px 10px;min-width:92px;font-family:var(--body);font-weight:600;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-right:1px solid var(--line)}
+.fct thead th{font-family:var(--body)}
+.fct th.day{background:var(--ink);color:var(--bg);text-align:left;padding:6px 8px;font-size:13px;font-weight:700;border-left:2px solid var(--surface)}
+.fct th.day .dl{position:sticky;left:100px;display:inline-block}
+.fct th.day small{font-weight:400;opacity:.7;margin-left:6px;font-size:11px}
+.fct tr.time td{font-weight:500;color:var(--muted);font-size:11px}
+.fct td.dstart{border-left:2px solid var(--line)}
+.fct td.night{background:var(--night)}
+.fct td.night>*{opacity:.55}
+.fct td.best{box-shadow:inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent)}
+.fct tr:first-child td.best,.fct tr.time td.best{box-shadow:inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent),inset 0 2px 0 var(--accent)}
+.fct tr:last-child td.best{box-shadow:inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent),inset 0 -2px 0 var(--accent)}
+.stars{color:var(--star);font-size:10px;letter-spacing:-1px;font-family:var(--body)}
+.stars i{font-style:normal;opacity:.22}
+.fct td.wave{font-weight:500;font-size:13px;color:var(--ink)}
+.fct .arr{display:block;margin:0 auto}
+.fct .cmp{display:block;font-size:10px;color:var(--muted)}
+.wbub{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;color:#fff;font-weight:500;position:relative}
+.wbub .arr{position:absolute;inset:0;margin:auto;opacity:.5}
+.wbub b{position:relative;font-weight:600}
+.fct td.wk{font-family:var(--body);font-size:10px;color:var(--muted)}
+.fct td.tidecell{font-size:11px}
+.fct td.hl{font-family:var(--body);font-size:10px;line-height:1.2}
+.fct td.hl b{display:block;font-size:11px}
+.fc-legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:10px 16px 14px;font-size:11px;color:var(--muted);align-items:center}
+.fc-legend .sw{display:inline-block;width:18px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:3px;border:1px solid var(--line)}
+.fc-note{padding:0 16px 12px;font-size:12px;color:var(--muted);margin:0}
+
+/* Liste */
+.list-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
+.list-head h3{margin:0;font-family:var(--display);font-variation-settings:"wdth" 110;font-size:16px;font-weight:700}
+.list-head small{color:var(--muted);font-size:12px}
+.list{display:grid;gap:8px}
+.spot{background:var(--surface);border:1px solid var(--line);border-radius:12px;width:100%;text-align:left;cursor:pointer;
+  padding:12px 14px;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:4px 12px;align-items:center}
+.spot:hover{border-color:var(--muted)}
+.spot.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.spot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pill{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-family:var(--display);font-variation-settings:"wdth" 75;font-weight:800;font-size:20px;color:#fff;font-variant-numeric:tabular-nums;grid-row:span 2}
+.sname{font-weight:700;font-size:16px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sname em{font-style:normal;font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
+.smeta{font-size:13px;color:var(--muted);min-width:0}
+.sdrive{text-align:right;font-family:var(--mono);font-size:13px;white-space:nowrap}
+.sdrive small{display:block;color:var(--muted);font-family:var(--body);font-size:11px}
+.strip{grid-column:1/-1;margin-top:4px}
+.strip svg{width:100%;height:34px;display:block}
+.strip .lbl{fill:var(--muted)}
+.spot.out{opacity:.55}
+.detail{padding:0 14px 14px;display:grid;gap:10px}
+.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
+th,td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--line)}
+th{font-family:var(--body);font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;background:var(--bg);position:sticky;top:0}
+td:first-child,th:first-child{text-align:left}
+tr.night td{opacity:.4}
+tr.best td{background:color-mix(in srgb,var(--accent) 12%,transparent)}
+.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px}
+.detail .links{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
+.detail a{color:var(--accent)}
+.spotnote{font-size:13px;color:var(--muted);margin:0}
+
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.status{font-size:13px;color:var(--muted);text-align:center;padding:24px 0}
+.err{color:var(--accent)}
+footer{font-size:12px;color:var(--muted);line-height:1.5}
+.skel{height:220px;border-radius:18px;background:linear-gradient(90deg,var(--shallow),var(--surface),var(--shallow));background-size:200% 100%;animation:sh 1.4s infinite linear}
+@keyframes sh{to{background-position:-200% 0}}
+@media (prefers-reduced-motion:reduce){.skel{animation:none}}
+@media (max-width:520px){
+  .conds{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .bigscore b{font-size:54px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="toprow">
+      <h1 class="brand">Bølge<span>jakt</span></h1>
+      <button class="btn" id="refresh" type="button">Oppdater</button>
+    </div>
+    <div class="where"><span id="whereTxt">Finner posisjonen din …</span>
+      <button class="btn" id="gps" type="button">Bruk min posisjon</button></div>
+    <form class="search" id="searchForm">
+      <input id="q" type="search" placeholder="Eller søk sted: Ericeira, Hossegor, Stavanger …" autocomplete="off" aria-label="Søk sted">
+      <button class="btn" type="submit">Søk</button>
+    </form>
+  </header>
+
+  <div class="controls">
+    <div class="ctl"><label for="skill">Nivå</label>
+      <select id="skill">
+        <option value="nybegynner">Nybegynner</option>
+        <option value="middels" selected>Middels</option>
+        <option value="erfaren">Erfaren</option>
+      </select></div>
+    <div class="ctl"><label for="maxDrive">Maks kjøretid</label>
+      <select id="maxDrive">
+        <option value="1">1 time</option>
+        <option value="2">2 timer</option>
+        <option value="4" selected>4 timer</option>
+        <option value="8">8 timer</option>
+      </select></div>
+    <div class="ctl"><label for="when">Når</label>
+      <select id="when">
+        <option value="today">I dag</option>
+        <option value="tomorrow">I morgen</option>
+        <option value="3d" selected>Neste 3 døgn</option>
+      </select></div>
+  </div>
+
+  <section id="hero"><div class="skel"></div></section>
+
+  <section id="fc"></section>
+
+  <div class="list-head">
+    <h3>Spots i nærheten</h3>
+    <small>trykk på en spot for å se varselet</small>
+  </div>
+  <div class="legend" id="legend"></div>
+  <div class="list" id="list"><div class="status">Finner spots …</div></div>
+
+  <footer>
+    Spots: en innebygd liste med kjente surfespots verden over, håndlagde norske spots, og ekstra surfespots og strender fra OpenStreetMap når den svarer.
+    Bølger og vind: Open-Meteo. Tidevann: Kartverket i Norge, ellers Open-Meteo-modell. Kjøretid: OSRM, uten trafikk og ferjeventetid.
+    Score 0–10 vekter bølgehøyde mot nivået ditt, swell-retning mot det spoten tar imot, vind (fraland er best), periode, tidevann og dagslys.
+    Strender som ikke er kjente surfespots får 20 % trekk. Kjøretid trekker 0,6 poeng per time i rangeringen. Alle klokkeslett er lokal tid ved spoten.
+    <span id="stamp"></span>
+  </footer>
+</div>
+
+<script>
+const DIRS = ["N","NNØ","NØ","ØNØ","Ø","ØSØ","SØ","SSØ","S","SSV","SV","VSV","V","VNV","NV","NNV"];
+const compass = d => DIRS[Math.round(((d%360)+360)%360/22.5)%16];
+// ---------- Håndlagde norske spots ----------
+// facing = retningen stranden vender mot havet (grader). swell = sektor bølgene må komme FRA [fra, til] med klokka.
+const CURATED = [
+  {id:"sola",  name:"Solastranden", region:"Jæren", lat:58.884, lon:5.596, facing:270, swell:[210,320], tide:"alle", max:2.8, note:"Lang sandstrand nær flyplassen. Tåler lite, best på små til mellomstore dager."},
+  {id:"hellesto",name:"Hellestø",   region:"Jæren", lat:58.840, lon:5.555, facing:260, swell:[200,310], tide:"mid",  max:3.0, note:"Populær strandbrekk med flere topper. Fin for alle nivå på mindre dager."},
+  {id:"bore",  name:"Borestranden", region:"Jæren", lat:58.797, lon:5.548, facing:255, swell:[200,300], tide:"alle", max:3.0, note:"Mye plass, flere sandbanker. Østavind gir rene forhold."},
+  {id:"reve",  name:"Reve (Point Perfect)", region:"Jæren", lat:58.762, lon:5.517, facing:240, swell:[200,290], tide:"mid", max:4.0, note:"Rev og stein. For erfarne, tåler større swell enn strendene."},
+  {id:"orre",  name:"Orrestranda",  region:"Jæren", lat:58.728, lon:5.525, facing:250, swell:[200,300], tide:"alle", max:3.0, note:"Lang strand, sjelden folksomt."},
+  {id:"brusand",name:"Brusand",     region:"Jæren", lat:58.535, lon:5.735, facing:225, swell:[180,280], tide:"alle", max:2.8, note:"Litt mer skjermet for nordvest. Fungerer ofte når nordre Jæren er for stort."},
+  {id:"ogna",  name:"Ognastranda",  region:"Jæren", lat:58.517, lon:5.783, facing:215, swell:[180,270], tide:"alle", max:2.8, note:"Elveos og sandbanker. Liker sørvest."},
+  {id:"lista", name:"Lista",        region:"Sørlandet", lat:58.109, lon:6.568, facing:250, swell:[190,300], tide:"alle", max:3.2, note:"Flere strender og rev rundt Lista fyr. Velg strand etter vinden når du er der."},
+  {id:"mandal",name:"Sjøsanden, Mandal", region:"Sørlandet", lat:58.018, lon:7.468, facing:185, swell:[150,230], tide:"alle", max:2.0, note:"Trenger kraftig sørlig swell. Sjelden, men nær for de på Sørlandet."},
+  {id:"saltstein",name:"Saltstein", region:"Østlandet", lat:58.968, lon:9.868, facing:200, swell:[160,250], tide:"alle", max:2.5, note:"Østlandets mest kjente spot. Steinstrand, virker på sørvest-kuling."},
+  {id:"verdensende",name:"Verdens Ende", region:"Østlandet", lat:59.068, lon:10.425, facing:190, swell:[150,240], tide:"alle", max:2.2, note:"Svaberg og stein ytterst på Tjøme. Trenger sør/sørvest vindsjø."},
+  {id:"hoddevik",name:"Hoddevik",   region:"Stad", lat:62.120, lon:5.148, facing:330, swell:[250,20], tide:"alle", max:3.0, note:"Vestlandets surfehovedstad. Bukta tar imot nordvest og vest-swell."},
+  {id:"ervik", name:"Ervik",        region:"Stad", lat:62.168, lon:5.118, facing:300, swell:[240,10], tide:"mid", max:3.2, note:"Mer åpen enn Hoddevik. Best på mindre dager og fralandsvind fra øst/sørøst."},
+  {id:"unstad",name:"Unstad",       region:"Lofoten", lat:68.271, lon:13.585, facing:315, swell:[250,30], tide:"mid", max:4.0, note:"Pointbreak og strand. Tidevannet betyr mye her."},
+  {id:"flakstad",name:"Flakstad",   region:"Lofoten", lat:68.102, lon:13.233, facing:345, swell:[280,40], tide:"alle", max:3.0, note:"Lang sandstrand ved kirka. Snill når Unstad er for stort."}
+].map(s=>({...s, kind:"surf", curated:true, tideApi:true}));
+
+// ---------- Kjente surfespots i resten av verden ----------
+// navn|breddegrad|lengdegrad|område|retning stranden vender mot havet (grader, omtrentlig)
+const WORLD_RAW = `Klitmøller|57.040|8.490|Danmark|315
+Hanstholm|57.120|8.620|Danmark|340
+Vorupør|56.960|8.360|Danmark|280
+Hvide Sande|56.000|8.120|Danmark|270
+Løkken|57.370|9.710|Danmark|300
+Torö|58.820|17.840|Sverige|170
+Mölle|56.280|12.490|Sverige|250
+Apelviken|57.090|12.240|Sverige|230
+Tylösand|56.650|12.730|Sverige|250
+Westerland, Sylt|54.910|8.300|Tyskland|280
+Scheveningen|52.110|4.270|Nederland|300
+Zandvoort|52.370|4.520|Nederland|285
+Wijk aan Zee|52.490|4.590|Nederland|285
+Fistral, Newquay|50.418|-5.100|England|300
+Watergate Bay|50.445|-5.040|England|290
+Polzeath|50.574|-4.920|England|315
+Croyde|51.130|-4.240|England|285
+Woolacombe|51.170|-4.210|England|270
+Saunton Sands|51.110|-4.220|England|270
+Sennen Cove|50.070|-5.700|England|300
+Praa Sands|50.100|-5.390|England|190
+Bude|50.830|-4.550|England|275
+Bournemouth|50.716|-1.870|England|160
+Saltburn|54.585|-0.970|England|30
+Tynemouth|55.020|-1.420|England|90
+Freshwater West|51.650|-5.060|Wales|260
+Llangennith|51.600|-4.290|Wales|270
+Thurso East|58.600|-3.510|Skottland|0
+Bundoran|54.480|-8.280|Irland|320
+Mullaghmore|54.470|-8.450|Irland|0
+Strandhill|54.270|-8.610|Irland|270
+Easkey|54.290|-8.960|Irland|330
+Lahinch|52.930|-9.350|Irland|270
+Inch Beach|52.130|-9.980|Irland|250
+Tramore|52.160|-7.140|Irland|180
+Portrush|55.200|-6.660|Nord-Irland|0
+La Gravière, Hossegor|43.665|-1.440|Frankrike|275
+Les Estagnots, Seignosse|43.700|-1.440|Frankrike|275
+Capbreton|43.645|-1.450|Frankrike|275
+Grande Plage, Biarritz|43.485|-1.560|Frankrike|300
+Anglet|43.500|-1.530|Frankrike|285
+Guéthary|43.430|-1.610|Frankrike|315
+Moliets|43.850|-1.390|Frankrike|275
+Mimizan|44.210|-1.300|Frankrike|275
+Biscarrosse|44.450|-1.250|Frankrike|275
+Lacanau|45.000|-1.200|Frankrike|275
+Le Porge|44.890|-1.200|Frankrike|275
+Montalivet|45.380|-1.160|Frankrike|275
+Les Sables-d'Olonne|46.490|-1.790|Frankrike|220
+Quiberon, Côte Sauvage|47.480|-3.150|Frankrike|255
+La Torche|47.840|-4.350|Frankrike|250
+Zurriola, San Sebastián|43.326|-1.975|Spania|0
+Zarautz|43.287|-2.170|Spania|0
+Mundaka|43.408|-2.700|Spania|330
+Sopelana|43.390|-2.990|Spania|330
+Somo|43.460|-3.740|Spania|0
+Rodiles|43.530|-5.370|Spania|0
+Salinas|43.570|-5.950|Spania|330
+Pantín|43.640|-8.110|Spania|330
+Razo|43.300|-8.700|Spania|300
+El Palmar|36.240|-6.070|Spania|230
+Famara|29.120|-13.560|Lanzarote|315
+La Santa|29.110|-13.650|Lanzarote|330
+El Cotillo|28.680|-14.010|Fuerteventura|280
+Majanicho|28.730|-13.940|Fuerteventura|0
+Playa de las Américas|28.060|-16.730|Tenerife|220
+El Confital|28.160|-15.440|Gran Canaria|330
+Las Canteras|28.140|-15.430|Gran Canaria|300
+Ribeira d'Ilhas, Ericeira|38.988|-9.420|Portugal|285
+Coxos, Ericeira|38.998|-9.425|Portugal|280
+Foz do Lizandro|38.940|-9.410|Portugal|260
+Supertubos, Peniche|39.345|-9.360|Portugal|230
+Baleal|39.375|-9.340|Portugal|330
+Praia do Norte, Nazaré|39.610|-9.080|Portugal|270
+Guincho|38.730|-9.470|Portugal|270
+Carcavelos|38.680|-9.335|Portugal|190
+Costa da Caparica|38.640|-9.240|Portugal|260
+Arrifana|37.290|-8.870|Portugal|270
+Amado|37.170|-8.900|Portugal|270
+Tonel, Sagres|37.000|-8.940|Portugal|240
+Cabedelo, Figueira da Foz|40.130|-8.870|Portugal|270
+Espinho|41.000|-8.650|Portugal|270
+Matosinhos|41.170|-8.690|Portugal|270
+Jardim do Mar|32.730|-17.210|Madeira|220
+Levanto|44.170|9.610|Italia|230
+Varazze|44.360|8.580|Italia|180
+Santa Marinella|42.030|11.850|Italia|220
+Capo Mannu|40.040|8.380|Sardinia|280
+Hilton Beach, Tel Aviv|32.090|34.770|Israel|270
+Þorlákshöfn|63.850|-21.370|Island|180
+Anchor Point, Taghazout|30.545|-9.711|Marokko|280
+Killer Point|30.560|-9.730|Marokko|280
+Tamraght|30.510|-9.680|Marokko|260
+Imsouane|30.840|-9.820|Marokko|270
+Sidi Kaouki|31.350|-9.800|Marokko|270
+Essaouira|31.500|-9.770|Marokko|300
+Safi|32.300|-9.240|Marokko|280
+Bouznika|33.800|-7.150|Marokko|320
+Rabat|34.030|-6.840|Marokko|315
+Mirleft|29.580|-10.040|Marokko|280
+N'Gor, Dakar|14.750|-17.520|Senegal|0
+Busua|4.800|-1.940|Ghana|180
+Jeffreys Bay|-34.050|24.930|Sør-Afrika|120
+Cape St Francis|-34.210|24.840|Sør-Afrika|110
+Muizenberg|-34.110|18.470|Sør-Afrika|170
+Llandudno|-34.006|18.340|Sør-Afrika|270
+Durban|-29.860|31.040|Sør-Afrika|100
+Huntington Beach|33.655|-118.000|California|210
+Trestles|33.380|-117.590|California|230
+Oceanside|33.190|-117.390|California|260
+Windansea, La Jolla|32.830|-117.280|California|270
+Malibu|34.035|-118.680|California|170
+Rincon|34.370|-119.480|California|210
+Pismo Beach|35.140|-120.640|California|260
+Morro Bay|35.370|-120.860|California|280
+Steamer Lane, Santa Cruz|36.950|-122.030|California|180
+Ocean Beach, San Francisco|37.760|-122.510|California|270
+Linda Mar, Pacifica|37.590|-122.500|California|270
+Short Sands|45.760|-123.960|Oregon|270
+Westport|46.890|-124.110|Washington|260
+Pipeline|21.665|-158.050|Hawaii|330
+Sunset Beach|21.678|-158.040|Hawaii|320
+Waikiki|21.270|-157.830|Hawaii|200
+Honolua Bay|21.010|-156.640|Hawaii|330
+Ditch Plains, Montauk|41.040|-71.920|New York|180
+Rockaway Beach|40.580|-73.820|New York|180
+Cape Hatteras|35.230|-75.530|North Carolina|120
+New Smyrna Beach|29.070|-80.920|Florida|90
+Cocoa Beach|28.370|-80.600|Florida|90
+Chesterman Beach, Tofino|49.120|-125.890|Canada|230
+Lawrencetown|44.640|-63.340|Canada|170
+San Miguel, Ensenada|31.900|-116.730|Mexico|250
+Todos Santos|23.400|-110.220|Mexico|250
+Sayulita|20.870|-105.440|Mexico|290
+Troncones|17.790|-101.740|Mexico|220
+Zicatela, Puerto Escondido|15.850|-97.060|Mexico|220
+Punta Roca|13.490|-89.320|El Salvador|190
+Popoyo|11.460|-86.110|Nicaragua|260
+San Juan del Sur|11.250|-85.870|Nicaragua|260
+Tamarindo|10.300|-85.840|Costa Rica|270
+Playa Guiones, Nosara|9.940|-85.660|Costa Rica|250
+Santa Teresa|9.650|-85.170|Costa Rica|250
+Jacó|9.610|-84.630|Costa Rica|230
+Playa Hermosa|9.560|-84.580|Costa Rica|230
+Pavones|8.390|-83.140|Costa Rica|200
+Salsa Brava, Puerto Viejo|9.660|-82.750|Costa Rica|30
+Santa Catalina|7.630|-81.250|Panama|200
+Montañita|-1.830|-80.750|Ecuador|270
+Máncora|-4.100|-81.050|Peru|300
+Chicama|-7.700|-79.440|Peru|300
+Miraflores, Lima|-12.130|-77.040|Peru|240
+Punta Hermosa|-12.330|-76.820|Peru|250
+Arica|-18.480|-70.330|Chile|270
+Iquique|-20.230|-70.150|Chile|270
+Punta de Lobos, Pichilemu|-34.430|-72.040|Chile|270
+Itacaré|-14.280|-38.990|Brasil|90
+Saquarema|-22.940|-42.480|Brasil|160
+Arpoador, Rio|-22.990|-43.190|Brasil|180
+Ubatuba|-23.430|-45.060|Brasil|120
+Joaquina, Florianópolis|-27.630|-48.450|Brasil|100
+Praia Mole|-27.600|-48.430|Brasil|100
+Silveira, Garopaba|-28.040|-48.620|Brasil|120
+La Paloma|-34.660|-54.160|Uruguay|160
+Mar del Plata|-38.010|-57.530|Argentina|110
+Uluwatu|-8.815|115.088|Bali|260
+Padang Padang|-8.810|115.100|Bali|300
+Balangan|-8.790|115.120|Bali|280
+Kuta Beach|-8.718|115.168|Bali|250
+Echo Beach, Canggu|-8.655|115.125|Bali|220
+Keramas|-8.600|115.340|Bali|160
+Nusa Dua|-8.800|115.240|Bali|100
+Medewi|-8.420|114.810|Bali|210
+Desert Point|-8.750|115.830|Lombok|300
+Selong Belanak|-8.870|116.150|Lombok|190
+Gerupuk|-8.920|116.350|Lombok|180
+G-Land|-8.730|114.350|Java|180
+Batu Karas|-7.750|108.500|Java|200
+Lakey Peak|-8.800|118.380|Sumbawa|200
+Arugam Bay|6.840|81.840|Sri Lanka|100
+Weligama|5.970|80.420|Sri Lanka|180
+Hiriketiya|5.960|80.710|Sri Lanka|170
+Hikkaduwa|6.140|80.100|Sri Lanka|240
+Varkala|8.730|76.700|India|260
+Kovalam|8.400|76.980|India|230
+Cloud 9, Siargao|9.810|126.170|Filippinene|90
+San Juan, La Union|16.620|120.320|Filippinene|270
+Kata Beach, Phuket|7.820|98.300|Thailand|270
+My Khe, Da Nang|16.050|108.250|Vietnam|80
+Kugenuma, Shonan|35.310|139.470|Japan|180
+Ichinomiya, Chiba|35.370|140.390|Japan|110
+Kisakihama, Miyazaki|31.820|131.460|Japan|120
+Jinzun|22.950|121.290|Taiwan|90
+Riyue Bay, Hainan|18.650|110.210|Kina|150
+Bondi|-33.890|151.280|Australia|110
+Manly|-33.800|151.290|Australia|90
+Cronulla|-34.060|151.150|Australia|120
+Merewether, Newcastle|-32.950|151.760|Australia|100
+Coffs Harbour|-30.300|153.150|Australia|90
+The Pass, Byron Bay|-28.640|153.630|Australia|20
+Snapper Rocks|-28.160|153.550|Australia|30
+Burleigh Heads|-28.090|153.460|Australia|60
+Noosa|-26.380|153.090|Australia|20
+Agnes Water|-24.210|151.900|Australia|30
+Bells Beach|-38.370|144.280|Australia|150
+Torquay|-38.340|144.320|Australia|150
+Middleton|-35.510|138.710|Australia|170
+Clifton Beach, Tasmania|-42.990|147.520|Australia|160
+Margaret River|-33.970|114.980|Australia|270
+Scarborough, Perth|-31.890|115.750|Australia|270
+Manu Bay, Raglan|-37.820|174.810|New Zealand|300
+Piha|-36.950|174.470|New Zealand|270
+Mount Maunganui|-37.630|176.180|New Zealand|30
+Wainui, Gisborne|-38.690|178.070|New Zealand|110
+Sumner, Christchurch|-43.570|172.760|New Zealand|90
+St Clair, Dunedin|-45.910|170.490|New Zealand|160
+Teahupoʻo|-17.860|-149.260|Tahiti|200`;
+const WORLD = WORLD_RAW.split("\n").map((l,i)=>{ const [name,lat,lon,region,f] = l.split("|"); const facing = +f;
+  return {id:"w"+i, name, lat:+lat, lon:+lon, region, kind:"surf", facing, swell:[(facing+290)%360,(facing+70)%360], tide:"alle", max:3.0,
+    note:`Kjent surfespot. Vender omtrent mot ${compass(facing)}.`}; });
+
+const SKILL = {
+  nybegynner:{a:.3, b:.5, c:1.2, d:1.8},
+  middels:   {a:.5, b:.8, c:2.0, d:2.9},
+  erfaren:   {a:.7, b:1.2,c:3.4, d:4.8}
+};
+const DRIVE_PENALTY = 0.6;              // poeng per time kjøring
+const RADIUS_KM = {1:110, 2:200, 4:330, 8:550};  // søkeradius i luftlinje
+const MAX_SPOTS = 45;
+const BEACH_FACTOR = 0.8;               // strender som ikke er merket som surfespot
+
+// ---------- Hjelpere ----------
+const $ = s => document.querySelector(s);
+const clamp = (x,a,b) => Math.max(a,Math.min(b,x));
+const angDiff = (a,b) => { const d = Math.abs(((a-b)%360+360)%360); return d>180?360-d:d; };
+const store = { get(k){try{return JSON.parse(localStorage.getItem("bj_"+k))}catch(e){return null}}, set(k,v){try{localStorage.setItem("bj_"+k,JSON.stringify(v))}catch(e){}} };
+const rad = d => d*Math.PI/180;
+function distKm(a,b){ const R=6371, dLat=rad(b.lat-a.lat), dLon=rad(b.lon-a.lon);
+  const x = Math.sin(dLat/2)**2 + Math.cos(rad(a.lat))*Math.cos(rad(b.lat))*Math.sin(dLon/2)**2; return 2*R*Math.asin(Math.sqrt(x)); }
+const esc = s => String(s).replace(/[&<>"]/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+// Lokal tid per tidssone (spotens egen tid)
+const fmtCache = {};
+function parts(ms, tz){
+  const f = fmtCache[tz] || (fmtCache[tz] = new Intl.DateTimeFormat("sv-SE",{timeZone:tz,year:"numeric",month:"2-digit",day:"2-digit",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}));
+  const s = f.format(new Date(ms)); return {date:s.slice(0,10), hm:s.slice(11,16), h:+s.slice(11,13)};
+}
+const DAYN = ["søn","man","tir","ons","tor","fre","lør"];
+const dayName = date => { const [y,m,d] = date.split("-").map(Number); return DAYN[new Date(Date.UTC(y,m-1,d)).getUTCDay()]; };
+function dayLabel(ms, tz){
+  const d = parts(ms,tz).date;
+  if(d===parts(Date.now(),tz).date) return "I dag";
+  if(d===parts(Date.now()+864e5,tz).date) return "I morgen";
+  const n = dayName(d); return n[0].toUpperCase()+n.slice(1);
+}
+const fmtDur = s => { const m = Math.round(s/60); if(m<60) return m+" min"; const h=Math.floor(m/60), r=m%60; return r? `${h} t ${r} min` : `${h} t`; };
+
+function band(score){
+  if(score>=7) return {c:"var(--s4)", t:"Episk"};
+  if(score>=5) return {c:"var(--s3)", t:"Bra"};
+  if(score>=3) return {c:"var(--s2)", t:"Surfbart"};
+  if(score>=1.5) return {c:"var(--s1)", t:"Svakt"};
+  return {c:"var(--s0)", t:"Dårlig"};
+}
+
+// ---------- Scoring ----------
+function trap(x,a,b,c,d){ if(x<=a||x>=d) return 0; if(x<b) return (x-a)/(b-a); if(x<=c) return 1; return (d-x)/(d-c); }
+function inWindow(d,[a,b]){ return ((d-a+360)%360) <= ((b-a+360)%360); }
+function windRel(spot,wd){ return angDiff(wd,(spot.facing+180)%360); }
+function windKind(spot,ws,wd){
+  if(ws<2) return "flau vind";
+  const r = windRel(spot,wd);
+  return r<=50?"fralandsvind":r<=110?"sidevind":"pålandsvind";
+}
+function scoreHour(spot,h,skill,tideRange){
+  if(h.h==null || h.dir==null) return {score:0, raw:0};
+  const sk = SKILL[skill];
+  const c = Math.min(sk.c, spot.max), d = Math.max(c+0.3, Math.min(sk.d, spot.max*1.4));
+  const size = trap(h.h, sk.a, Math.min(sk.b,c-0.05), c, d);
+  const dir = inWindow(h.dir,spot.swell) ? 1 : clamp(1 - Math.min(angDiff(h.dir,spot.swell[0]),angDiff(h.dir,spot.swell[1]))/45, 0, 1);
+  const per = clamp(0.3 + (h.per-4)*0.1, 0.3, 1);
+  let wind = 1;
+  if(h.ws!=null && h.ws>=2){
+    const r = windRel(spot,h.wd);
+    if(r<=50) wind = h.ws<=9 ? 1 : clamp(1-(h.ws-9)/8, .2, 1);
+    else if(r<=110) wind = clamp(1-(h.ws-2)/9, .1, 1);
+    else wind = clamp(1-(h.ws-1.5)/5, 0, 1);
+    if(h.gust>10 && h.gust>h.ws*1.6) wind *= .9;
+  }
+  let tide = 1;
+  if(spot.tide!=="alle" && h.tideN!=null){
+    const n = h.tideN;
+    const raw = spot.tide==="lav" ? 1-n : spot.tide==="høy" ? n : 1-Math.abs(n-.5)*2;
+    tide = 1 - clamp(tideRange/2, .1, .5)*(1-raw);
+  }
+  const kind = spot.kind==="beach" ? BEACH_FACTOR : 1;
+  const raw = 10*size*dir*per*wind*tide*kind;
+  return {score: raw*(h.day?1:0), raw};
+}
+
+async function getJSON(url){ const r = await fetch(url); if(!r.ok) throw new Error(r.status); return r.json(); }
+
+// ---------- Finne spots rundt deg (OpenStreetMap) ----------
+// Offentlige Overpass-servere er ofte overbelastet. Prøv én om gangen, med tidsavbrudd.
+const OVERPASS = ["https://overpass-api.de/api/interpreter","https://maps.mail.ru/osm/tools/overpass/api/interpreter"];
+async function overpass(q){
+  for(const ep of OVERPASS){
+    const ctl = new AbortController(), timer = setTimeout(()=>ctl.abort(), 20000);
+    try{
+      const r = await fetch(ep,{method:"POST",signal:ctl.signal,headers:{"Content-Type":"application/x-www-form-urlencoded"},body:"data="+encodeURIComponent(q)});
+      if(r.ok){ const j = await r.json(); clearTimeout(timer); if(!j.remark || j.elements?.length) return j; }
+    }catch(e){}
+    clearTimeout(timer);
+  }
+  throw new Error("overpass");
+}
+// Surfebutikker, skoler og leiesteder er også merket sport=surfing i OSM. De skal ikke med.
+const NOT_A_SPOT = /shop|store|school|skole|escuela|escola|[ée]cole|schule|academy|lesson|camp|hostel|hotel|house|lodge|rental|hire|club|klubb|caf[eé]|\bbar\b|outlet|magasin|board|surfboard|tienda|loja|eskola/i;
+const BAD_TAGS = ["shop","craft","amenity","office","club","building","healthcare"];
+function isSpot(t){
+  if(BAD_TAGS.some(k=>t[k])) return false;
+  if(t.tourism && t.tourism!=="attraction") return false;
+  if(t.leisure && ["sports_centre","fitness_centre","water_park","swimming_pool","pitch"].includes(t.leisure)) return false;
+  return !NOT_A_SPOT.test(t.name||"");
+}
+
+// Retning per spot lagres for godt (terrenget flytter seg ikke)
+async function withFacing(list){
+  const memo = store.get("facing") || {};
+  const need = list.filter(p=>p.facing==null && memo[p.id]===undefined);
+  if(need.length){
+    const f = await seaFacing(need);
+    need.forEach((p,i)=>{ memo[p.id] = f[i]; });
+    store.set("facing", memo);
+  }
+  return list.map(p=>{
+    if(p.facing!=null) return p;
+    const facing = memo[p.id];
+    if(facing==null) return null; // ikke ved havet
+    return {...p, facing, swell:[(facing+290)%360,(facing+70)%360], tide:"alle", max:3.0,
+      note: p.osm ? (p.kind==="surf" ? `Merket som surfespot i OpenStreetMap. Vender omtrent mot ${compass(facing)}.`
+                                     : `Strand som vender omtrent mot ${compass(facing)}. Ikke merket som surfespot, så sjekk lokalt om den bryter.`)
+                  : `Kjent surfespot. Vender omtrent mot ${compass(facing)} (beregnet fra terrenget).`};
+  }).filter(Boolean);
+}
+
+function builtInSpots(origin, radiusKm){
+  return [...CURATED, ...WORLD].map(s=>({...s, dist:distKm(origin,s)})).filter(s=>s.dist<=radiusKm);
+}
+
+// Ekstra spots fra OpenStreetMap. Overpass er ofte treg, så dette kjører i bakgrunnen.
+async function osmSpots(origin, radiusKm){
+  const key = `osm_${origin.lat.toFixed(1)}_${origin.lon.toFixed(1)}_${radiusKm}`;
+  const cached = store.get(key);
+  if(cached && Date.now()-cached.t < 14*864e5) return cached.spots;
+  const dLat = radiusKm/110.57, dLon = radiusKm/(111.32*Math.cos(rad(origin.lat)));
+  const bb = `(${(origin.lat-dLat).toFixed(3)},${(origin.lon-dLon).toFixed(3)},${(origin.lat+dLat).toFixed(3)},${(origin.lon+dLon).toFixed(3)})`;
+  const d = await overpass(`[out:json][timeout:25];(nwr["sport"="surfing"]${bb};nwr["natural"="beach"]["name"]${bb};);out center tags qt;`);
+  let cands = d.elements.map(e=>{
+    const t = e.tags||{}, lat = e.lat ?? e.center?.lat, lon = e.lon ?? e.center?.lon;
+    const surf = t.sport==="surfing";
+    if(lat==null || (surf && !isSpot(t))) return null;
+    const name = t.name || t["name:en"] || (surf ? "Surfespot" : null);
+    if(!name) return null;
+    return {id:e.type[0]+e.id, name, lat, lon, kind: surf?"surf":"beach", osm:true, region: surf?"Surfespot":"Strand", dist: distKm(origin,{lat,lon})};
+  }).filter(c=>c && c.dist<=radiusKm);
+  const cell = Math.max(4, radiusKm/14);
+  cands.sort((a,b)=> (a.kind==="surf"?0:1)-(b.kind==="surf"?0:1) || a.dist-b.dist);
+  const picked = [];
+  for(const c of cands){
+    if(picked.some(p=>distKm(p,c) < (p.kind==="surf"&&c.kind==="surf" ? 1.5 : cell))) continue;
+    picked.push(c);
+    if(picked.length >= 30) break;
+  }
+  store.set(key,{t:Date.now(), spots:picked});
+  return picked;
+}
+
+const RING_DIST = [1,3], RING_N = 8;   // 16 punkter per spot (Open-Meteo teller hvert punkt)
+async function seaFacing(pts){
+  const q = [];
+  pts.forEach(p=>{ const kx = Math.cos(rad(p.lat))*111.32;
+    for(let k=0;k<RING_N;k++){ const b = k*360/RING_N;
+      for(const d of RING_DIST) q.push([(p.lat + d/110.57*Math.cos(rad(b))).toFixed(5), (p.lon + d/kx*Math.sin(rad(b))).toFixed(5)]); } });
+  const chunks = [];
+  for(let i=0;i<q.length;i+=100) chunks.push(q.slice(i,i+100));
+  const res = await Promise.all(chunks.map(ch=>getJSON(`https://api.open-meteo.com/v1/elevation?latitude=${ch.map(c=>c[0]).join(",")}&longitude=${ch.map(c=>c[1]).join(",")}`).then(d=>d.elevation)));
+  const el = res.flat(), per = RING_N*RING_DIST.length;
+  return pts.map((p,i)=>{
+    const w = [];
+    for(let k=0;k<RING_N;k++){ let n=0; for(let j=0;j<RING_DIST.length;j++) if(el[i*per+k*RING_DIST.length+j] <= 0.5) n++; w.push(n); }
+    const open = w.map((n,k)=>n===RING_DIST.length?k:-1).filter(k=>k>=0);
+    const use = open.length ? open : w.map((n,k)=>n>0?k:-1).filter(k=>k>=0);
+    if(!use.length) return null;
+    let x=0, y=0; use.forEach(k=>{ x += Math.sin(rad(k*360/RING_N))*w[k]; y += Math.cos(rad(k*360/RING_N))*w[k]; });
+    return Math.round((Math.atan2(x,y)*180/Math.PI+360)%360);
+  });
+}
+
+
+// ---------- Varsel ----------
+async function fetchForecast(spots){
+  const lat = spots.map(s=>s.lat.toFixed(4)).join(","), lon = spots.map(s=>s.lon.toFixed(4)).join(",");
+  const common = `latitude=${lat}&longitude=${lon}&timezone=auto&timeformat=unixtime&forecast_days=4`;
+  const [marine, wx] = await Promise.all([
+    getJSON(`https://marine-api.open-meteo.com/v1/marine?${common}&hourly=wave_height,wave_direction,wave_period,swell_wave_period,swell_wave_peak_period,sea_level_height_msl&cell_selection=sea`),
+    getJSON(`https://api.open-meteo.com/v1/forecast?${common}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=sunrise,sunset&wind_speed_unit=ms`)
+  ]);
+  const M = Array.isArray(marine)?marine:[marine], W = Array.isArray(wx)?wx:[wx];
+  const tides = await Promise.all(spots.map(s=>s.tideApi ? fetchTide(s).catch(()=>null) : null));
+  return spots.map((s,i)=>buildHours(s, M[i], W[i], tides[i])).filter(f=>f.hours.some(h=>h.h!=null));
+}
+
+async function fetchTide(s){
+  const day = ms => new Date(ms).toISOString().slice(0,10)+"T00:00";
+  const url = `https://vannstand.kartverket.no/tideapi.php?lat=${s.lat}&lon=${s.lon}&fromtime=${day(Date.now()-864e5)}&totime=${day(Date.now()+5*864e5)}&datatype=pre&refcode=cd&lang=nb&interval=60&dst=1&tzone=1&tide_request=locationdata`;
+  const r = await fetch(url); if(!r.ok) throw new Error("tide");
+  const xml = new DOMParser().parseFromString(await r.text(),"text/xml");
+  const out = {};
+  xml.querySelectorAll("waterlevel").forEach(w=>{ out[Math.round(Date.parse(w.getAttribute("time"))/36e5)] = parseFloat(w.getAttribute("value"))/100; });
+  return Object.keys(out).length ? out : null;
+}
+
+function buildHours(spot, m, w, tide){
+  const tz = m.timezone || w.timezone || "UTC";
+  const sun = {};
+  w.daily.time.forEach((t,i)=>{ sun[parts(t*1000,tz).date] = [w.daily.sunrise[i]*1000, w.daily.sunset[i]*1000]; });
+  const wIdx = {}; w.hourly.time.forEach((t,i)=>wIdx[t]=i);
+  const H = m.hourly;
+  const hours = H.time.map((t,i)=>{
+    const ms = t*1000, wi = wIdx[t], ss = sun[parts(ms,tz).date];
+    const day = ss ? (ms >= ss[0]-30*60e3 && ms <= ss[1]-30*60e3) : true;
+    const per = H.swell_wave_peak_period[i] ?? H.swell_wave_period[i] ?? H.wave_period[i] ?? 6;
+    const tl = tide ? tide[Math.round(ms/36e5)] : H.sea_level_height_msl?.[i];
+    return { ms, h:H.wave_height[i], dir:H.wave_direction[i], per,
+      ws: wi!=null ? w.hourly.wind_speed_10m[wi] : null,
+      wd: wi!=null ? w.hourly.wind_direction_10m[wi] : null,
+      gust: wi!=null ? w.hourly.wind_gusts_10m[wi] : null,
+      tide: tl ?? null, day };
+  });
+  const tv = hours.map(h=>h.tide).filter(v=>v!=null);
+  const tmin = Math.min(...tv), tmax = Math.max(...tv), range = tv.length ? tmax-tmin : 0;
+  hours.forEach((h,i)=>{
+    h.tideN = h.tide!=null && range>0 ? (h.tide-tmin)/range : null;
+    const nx = hours[i+1]; h.tideTrend = nx && nx.tide!=null && h.tide!=null ? (nx.tide>h.tide?"stigende":"fallende") : "";
+  });
+  return { spot, tz, hours, tideRange: range, tideSrc: tide ? "Kartverket" : "modell", sun };
+}
+
+async function fetchDrive(origin, spots){
+  try{
+    const coords = [[origin.lon,origin.lat], ...spots.map(s=>[s.lon,s.lat])].map(c=>c.map(v=>v.toFixed(5)).join(",")).join(";");
+    const d = await getJSON(`https://router.project-osrm.org/table/v1/driving/${coords}?sources=0&annotations=duration,distance`);
+    return spots.map((s,i)=>({ dur:d.durations[0][i+1], dist:d.distances[0][i+1], est:false }));
+  }catch(e){
+    // Reserve: luftlinje × 1,3 i 65 km/t
+    return spots.map(s=>{ const km = distKm(origin,s)*1.3; return {dur:km/65*3600, dist:km*1000, est:true}; });
+  }
+}
+
+// ---------- State ----------
+const state = {
+  origin: null,
+  skill: store.get("skill") || "middels",
+  maxDrive: store.get("maxDrive") || 4,
+  when: store.get("when") || "3d",
+  forecast: null, drive: null, loadedRadius: 0, fetchedAt: null, selId: null
+};
+if(!RADIUS_KM[state.maxDrive]) state.maxDrive = 4;
+
+// ---------- Analyse ----------
+function analyse(){
+  const now = Date.now();
+  return state.forecast.map((f,i)=>{
+    const dr = state.drive[i];
+    const driveS = dr && dr.dur!=null ? dr.dur : null;
+    const arriveMs = now + (driveS||0)*1000 - 30*60e3; // inntil 30 min inn i timen teller
+    const scored = f.hours.map(h=>({...h, ...scoreHour(f.spot,h,state.skill,f.tideRange)}));
+    const today = parts(now,f.tz).date, tom = parts(now+864e5,f.tz).date;
+    const inHorizon = h => state.when==="today" ? parts(h.ms,f.tz).date===today
+      : state.when==="tomorrow" ? parts(h.ms,f.tz).date===tom
+      : h.ms >= now-36e5 && h.ms < now+3*864e5;
+    let best = null;
+    for(let j=0;j<scored.length-1;j++){
+      const a = scored[j], b = scored[j+1];
+      if(!inHorizon(a) || !a.day || a.ms < arriveMs) continue;
+      const sc = b && b.day ? (a.score+b.score)/2 : a.score*0.85;
+      if(!best || sc > best.score) best = {score:sc, i:j, start:a.ms, end: b && b.day ? b.ms : a.ms};
+    }
+    const driveH = driveS!=null ? driveS/3600 : null;
+    const value = best ? best.score - (driveH!=null ? driveH*DRIVE_PENALTY : 0) : -99;
+    return { ...f, scored, best, driveS, driveH, driveEst: dr?.est, dist: dr?.dist, value,
+      inRange: driveH!=null && driveH <= state.maxDrive, inHorizon };
+  });
+}
+
+// ---------- Render ----------
+function strip(r, hero){
+  const now = Date.now(), tz = r.tz;
+  const n = state.when==="3d" ? 72 : 24;
+  let startIdx;
+  if(state.when==="3d") startIdx = r.scored.findIndex(h=>h.ms >= now-36e5);
+  else { const target = parts(state.when==="today"?now:now+864e5, tz).date; startIdx = r.scored.findIndex(h=>parts(h.ms,tz).date===target); }
+  if(startIdx<0) return "";
+  const hrs = r.scored.slice(startIdx, startIdx+n);
+  const W = n*4, Hh = 26;
+  const arrive = r.driveS!=null ? now + r.driveS*1000 : null;
+  let s = `<svg viewBox="0 0 ${W} ${Hh+10}" preserveAspectRatio="none" role="img" aria-label="Score time for time">`;
+  hrs.forEach((h,k)=>{
+    const p = parts(h.ms,tz);
+    const v = Math.max(h.score, h.day?0.25:0.15), bh = Math.max(1.5, v/10*Hh);
+    const fill = hero ? "currentColor" : band(h.score).c;
+    const op = h.day ? (hero ? (r.best && h.ms>=r.best.start && h.ms<=r.best.end ? 1 : .55) : 1) : .18;
+    s += `<rect x="${k*4+.4}" y="${Hh-bh}" width="3.2" height="${bh}" rx=".8" fill="${fill}" opacity="${op}"/>`;
+    if(p.h===0 && k>0) s += `<rect x="${k*4-.3}" y="0" width=".6" height="${Hh+10}" fill="currentColor" opacity=".25"/>`;
+    if(p.h===12) s += `<text x="${k*4}" y="${Hh+9}" font-size="7" text-anchor="middle" class="lbl" font-family="Archivo,sans-serif">${dayName(p.date)}</text>`;
+    if(arrive && arrive>=h.ms && arrive<h.ms+36e5) s += `<path d="M${k*4+2} ${Hh+1} l-2 3 h4z" fill="${hero?"currentColor":"var(--ink)"}"/>`;
+  });
+  return s + `</svg>`;
+}
+
+function condsFor(r, h){
+  const wk = h.ws!=null ? windKind(r.spot,h.ws,h.wd) : "";
+  const sun = r.sun[parts(h.ms,r.tz).date];
+  return `
+    <div class="cond"><span>Bølger</span><b>${h.h.toFixed(1)} m · ${Math.round(h.per)} s</b><i>fra ${compass(h.dir)}</i></div>
+    <div class="cond"><span>Vind</span><b>${h.ws!=null?Math.round(h.ws):"–"} m/s</b><i>${h.wd!=null?"fra "+compass(h.wd)+", ":""}${wk}</i></div>
+    <div class="cond"><span>Tidevann</span><b>${h.tide!=null?Math.round(h.tide*100)+" cm":"–"}</b><i>${h.tideTrend}${r.spot.tide!=="alle"?", liker "+r.spot.tide:""}</i></div>
+    <div class="cond"><span>Dagslys</span><b>${sun?parts(sun[0],r.tz).hm+"–"+parts(sun[1],r.tz).hm:"–"}</b><i>sol opp/ned</i></div>`;
+}
+
+function links(r){
+  const {lat,lon,name} = r.spot;
+  return `<a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}" target="_blank" rel="noopener">Veibeskrivelse</a>
+    <a href="https://www.windy.com/?waves,${lat},${lon},9" target="_blank" rel="noopener">Bølgekart (Windy)</a>
+    <a href="https://www.google.com/search?q=${encodeURIComponent("surf-forecast "+name)}" target="_blank" rel="noopener">Surf-forecast</a>`;
+}
+const hourEnd = (ms,tz) => parts(ms+36e5,tz).hm;
+const driveTxt = r => r.driveS!=null ? (r.driveEst?"ca. ":"")+fmtDur(r.driveS) : "ingen bilvei";
+
+function renderHero(rows){
+  const el = $("#hero");
+  const ranked = rows.filter(r=>r.best && r.inRange).sort((a,b)=>b.value-a.value);
+  const top = ranked[0];
+  if(!top || top.best.score < 1.5){
+    const any = rows.filter(r=>r.best).sort((a,b)=>b.best.score-a.best.score)[0];
+    el.innerHTML = `<div class="hero"><div class="eyebrow">Beste valg</div>
+      <h2>Ingenting verdt det innen ${state.maxDrive} t</h2>
+      <p class="note">${any && any.best.score>=1.5 ? `Beste i nærheten er <b>${esc(any.spot.name)}</b> (${any.best.score.toFixed(1)}), ${driveTxt(any)} unna. Øk maks kjøretid for å ta den med.` : "Ingen spots ser surfbare ut i perioden. Prøv «Neste 3 døgn» eller et annet nivå."}</p></div>`;
+    return;
+  }
+  const r = top, b = r.best, h = r.scored[b.i], bd = band(b.score), tz = r.tz;
+  const leaveMs = b.start - (r.driveS||0)*1000;
+  const leaveNow = leaveMs <= Date.now()+10*60e3;
+  el.innerHTML = `<div class="hero">
+    <div class="eyebrow">Beste valg ${state.when==="today"?"i dag":state.when==="tomorrow"?"i morgen":"neste 3 døgn"}</div>
+    <div class="hero-main">
+      <div><h2>${esc(r.spot.name)}</h2><div class="region">${esc(r.spot.region)}${r.dist!=null?` · ${Math.round(r.dist/1000)} km`:""}</div></div>
+      <div class="bigscore"><b>${b.score.toFixed(1)}</b><small>${bd.t}</small></div>
+    </div>
+    <div class="plan">
+      <div class="chip"><span>Beste vindu</span><b>${dayLabel(b.start,tz)} ${parts(b.start,tz).hm}–${hourEnd(b.end,tz)}</b></div>
+      <div class="chip"><span>Kjøretid</span><b>${driveTxt(r)}</b></div>
+      <div class="chip go"><span>Dra</span><b>${leaveNow?"Nå":dayLabel(leaveMs,tz)+" "+parts(leaveMs,tz).hm}</b></div>
+    </div>
+    <div>${strip(r,true)}</div>
+    <div class="conds">${condsFor(r,h)}</div>
+    <div class="links">${links(r)}</div>
+  </div>`;
+}
+
+function starsHtml(score){
+  const n = clamp(Math.round(score/2),0,5);
+  return `<span class="stars" aria-label="${n} av 5 stjerner">${"★".repeat(n)}<i>${"★".repeat(5-n)}</i></span>`;
+}
+
+function renderList(rows){
+  const sorted = [...rows].sort((a,b)=> (b.inRange-a.inRange) || (b.value-a.value));
+  if(!sorted.length){ $("#list").innerHTML = `<div class="status">Fant ingen spots ved havet innen ${RADIUS_KM[state.maxDrive]} km. Øk maks kjøretid eller søk et annet sted.</div>`; return; }
+  $("#list").innerHTML = sorted.map(r=>{
+    const sc = r.best ? r.best.score : 0, bd = band(sc);
+    const h = r.best ? r.scored[r.best.i] : null;
+    const meta = h ? `${starsHtml(sc)} ${dayLabel(r.best.start,r.tz)} ${parts(r.best.start,r.tz).hm} · ${h.h.toFixed(1)} m ${Math.round(h.per)} s ${compass(h.dir)} · vind ${Math.round(h.ws)} m/s ${h.ws>=2?compass(h.wd):""}`
+                   : "Ingen dagslys-timer etter at du er fremme";
+    return `<button type="button" class="spot${r.inRange?"":" out"}${state.selId===r.spot.id?" sel":""}" data-id="${r.spot.id}">
+        <span class="pill" style="background:${bd.c}">${sc.toFixed(1)}</span>
+        <span class="sname">${esc(r.spot.name)}<em>${esc(r.spot.region)}</em></span>
+        <span class="sdrive" style="grid-row:span 2">${driveTxt(r)}<small>${r.inRange?"kjøretid":"for langt"}</small></span>
+        <span class="smeta">${meta}</span>
+        <span class="strip">${strip(r,false)}</span>
+      </button>`;
+  }).join("");
+  document.querySelectorAll("button.spot").forEach(btn=>{
+    btn.onclick = ()=>{
+      state.selId = btn.dataset.id;
+      document.querySelectorAll("button.spot").forEach(x=>x.classList.toggle("sel", x===btn));
+      renderForecast(rows.find(r=>r.spot.id===state.selId));
+      $("#fc").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
+    };
+  });
+}
+
+// ---------- Varseltabell (3-timers kolonner) ----------
+function waveColor(h){ const t=[.3,.6,1,1.5,2,3]; let i=t.findIndex(x=>h<x); if(i<0) i=6; return `var(--w${i})`; }
+function windColor(spot,ws,wd){
+  if(ws==null) return "var(--calm)";
+  const k = windKind(spot,ws,wd);
+  return k==="flau vind" ? "var(--calm)" : k==="fralandsvind" ? "var(--off)" : k==="sidevind" ? "var(--cross)" : "var(--on)";
+}
+const WK_SHORT = {"flau vind":"flau","fralandsvind":"fraland","sidevind":"side","pålandsvind":"påland"};
+// Pila peker dit bølgene/vinden går (motsatt av «fra»-retningen)
+const arrowSvg = (fromDeg, size, fill) => `<svg class="arr" viewBox="-10 -10 20 20" width="${size}" height="${size}" style="transform:rotate(${Math.round(fromDeg+180)}deg)" aria-hidden="true"><path d="M0-9L6 6 0 2-6 6Z" fill="${fill}"/></svg>`;
+
+function renderForecast(r){
+  const el = $("#fc");
+  if(!r){ el.innerHTML = ""; return; }
+  const tz = r.tz, now = Date.now(), H = r.scored;
+  const cols = H.filter(h=>h.ms >= now-3*36e5 && parts(h.ms,tz).h % 3 === 0 && h.h!=null);
+  if(!cols.length){ el.innerHTML = ""; return; }
+
+  // Høy- og lavvann fra timesserien
+  const ext = [];
+  for(let i=1;i<H.length-1;i++){
+    const a=H[i-1].tide, b=H[i].tide, c=H[i+1].tide;
+    if(a==null||b==null||c==null) continue;
+    if(b>=a && b>c) ext.push({ms:H[i].ms, t:"Høy", v:b});
+    else if(b<=a && b<c) ext.push({ms:H[i].ms, t:"Lav", v:b});
+  }
+  const extFor = c => ext.filter(e=>e.ms>=c.ms && e.ms<c.ms+3*36e5);
+
+  // Dager
+  const days = [];
+  cols.forEach(c=>{ const d = parts(c.ms,tz).date; const last = days[days.length-1];
+    if(last && last.date===d) last.n++; else days.push({date:d, ms:c.ms, n:1}); });
+  const isStart = c => { const p = parts(c.ms,tz); return cols[0]!==c && p.h===0; };
+  const inBest = c => r.best && c.ms + 3*36e5 > r.best.start && c.ms <= r.best.end;
+  const cls = (c, extra="") => `class="${[extra, isStart(c)?"dstart":"", c.day?"":"night", inBest(c)?"best":""].filter(Boolean).join(" ")}"`;
+
+  const row = (label, fn, rowCls="") => `<tr${rowCls?` class="${rowCls}"`:""}><th class="lab" scope="row">${label}</th>${cols.map(fn).join("")}</tr>`;
+  const dayHead = days.map(d=>{
+    const sun = r.sun[d.date];
+    const lbl = dayLabel(d.ms,tz)+" "+(+d.date.slice(8,10))+".";
+    return `<th class="day" colspan="${d.n}"><span class="dl">${d.n>=2?lbl:dayName(d.date)}${sun && d.n>=4?`<small>☀ ${parts(sun[0],tz).hm}–${parts(sun[1],tz).hm}</small>`:""}</span></th>`;
+  }).join("");
+
+  const s = r.spot;
+  el.innerHTML = `<div class="fc">
+    <div class="fc-head">
+      <h3>${esc(s.name)}</h3>
+      <div class="sub">${esc(s.region)} · vender mot ${compass(s.facing)} · ${driveTxt(r)} kjøring · tidevann: ${r.tideSrc} · lokal tid</div>
+      <div class="links">${links(r)}</div>
+    </div>
+    <div class="fc-scroll"><table class="fct">
+      <thead><tr><th class="lab"></th>${dayHead}</tr></thead>
+      <tbody>
+        ${row("Tid", c=>`<td ${cls(c)}>${parts(c.ms,tz).hm.slice(0,2)}</td>`, "time")}
+        ${row("Rating", c=>`<td ${cls(c)}>${starsHtml(c.raw)}</td>`)}
+        ${row("Bølger m", c=>`<td ${cls(c,"wave")} style="background:${waveColor(c.h)}">${c.h.toFixed(1)}</td>`)}
+        ${row("Swell", c=>`<td ${cls(c)}>${arrowSvg(c.dir, Math.round(clamp(12+c.h*4,12,26)), "var(--ink)")}<span class="cmp">${compass(c.dir)}</span></td>`)}
+        ${row("Periode s", c=>`<td ${cls(c)}>${Math.round(c.per)}</td>`)}
+        ${row("Vind m/s", c=>`<td ${cls(c)}>${c.ws==null?"–":`<span class="wbub" style="background:${windColor(s,c.ws,c.wd)}">${arrowSvg(c.wd,28,"#fff")}<b>${Math.round(c.ws)}</b></span>`}</td>`)}
+        ${row("Vindtype", c=>`<td ${cls(c,"wk")}>${c.ws==null?"–":WK_SHORT[windKind(s,c.ws,c.wd)]}</td>`)}
+        ${row("Kast m/s", c=>`<td ${cls(c)}>${c.gust==null?"–":Math.round(c.gust)}</td>`)}
+        ${row("Tidevann cm", c=>`<td ${cls(c,"tidecell")}>${c.tide==null?"–":Math.round(c.tide*100)+(c.tideTrend?(c.tideTrend==="stigende"?"↑":"↓"):"")}</td>`)}
+        ${row("Høy / lav", c=>`<td ${cls(c,"hl")}>${extFor(c).map(e=>`<b>${e.t}</b>${parts(e.ms,tz).hm}`).join("")}</td>`)}
+      </tbody></table></div>
+    <div class="fc-legend">
+      <span>Bølger:</span>${[[.2,"<0,3"],[.5,"0,3"],[.8,"0,6"],[1.2,"1"],[1.7,"1,5"],[2.5,"2"],[3.5,"3+"]].map(([v,t])=>`<span><span class="sw" style="background:${waveColor(v)}"></span>${t}</span>`).join("")}
+      <span>Vind:</span><span><span class="sw" style="background:var(--off)"></span>fraland</span><span><span class="sw" style="background:var(--cross)"></span>side</span><span><span class="sw" style="background:var(--on)"></span>påland</span><span><span class="sw" style="background:var(--calm)"></span>flau</span>
+      <span>Pilene viser hvor bølger og vind går. Rammen markerer beste vindu.</span>
+    </div>
+    <p class="fc-note">${esc(s.note)}</p>
+  </div>`;
+  const best = el.querySelector("td.best"), sc = el.querySelector(".fc-scroll");
+  if(best && sc) sc.scrollLeft = Math.max(0, best.offsetLeft - 140);
+}
+
+function renderLegend(){
+  $("#legend").innerHTML = [[7,"Episk 7+"],[5,"Bra 5–7"],[3,"Surfbart 3–5"],[1.5,"Svakt 1,5–3"],[0,"Dårlig"]]
+    .map(([v,t])=>`<span><span class="dot" style="background:${band(v).c}"></span>${t}</span>`).join("") + `<span>▲ = når du er fremme hvis du drar nå</span>`;
+}
+
+function render(){
+  if(!state.forecast) return;
+  const rows = analyse();
+  renderHero(rows);
+  const top = rows.filter(r=>r.best && r.inRange).sort((a,b)=>b.value-a.value)[0] || rows[0];
+  if(!rows.some(r=>r.spot.id===state.selId)) state.selId = top?.spot.id;
+  renderList(rows);
+  renderForecast(rows.find(r=>r.spot.id===state.selId));
+  $("#stamp").textContent = state.fetchedAt ? ` Sist hentet ${new Date(state.fetchedAt).toLocaleTimeString("nb-NO",{hour:"2-digit",minute:"2-digit"})}.` : "";
+}
+
+// ---------- Posisjon ----------
+function setOrigin(o){
+  state.origin = o; store.set("origin", o);
+  $("#whereTxt").innerHTML = o.gps ? "Fra <b>din posisjon</b>" : `Fra <b>${esc(o.name)}</b>`;
+}
+function locate(){
+  return new Promise(res=>{
+    if(!navigator.geolocation) return res(null);
+    navigator.geolocation.getCurrentPosition(
+      p=>res({name:"Min posisjon", gps:true, lat:p.coords.latitude, lon:p.coords.longitude}),
+      ()=>res(null), {enableHighAccuracy:false, timeout:8000, maximumAge:10*60e3});
+  });
+}
+async function geocode(q){
+  const d = await getJSON(`https://nominatim.openstreetmap.org/search?format=json&limit=1&accept-language=nb&q=${encodeURIComponent(q)}`);
+  if(!d.length) return null;
+  return {name: d[0].display_name.split(",").slice(0,2).join(",").trim(), lat:+d[0].lat, lon:+d[0].lon};
+}
+
+// ---------- Lasting ----------
+let loadSeq = 0;
+function merge(base, extra){
+  return [...base, ...extra.filter(e=>!base.some(b=>distKm(b,e) < (e.kind==="beach"?4:2)))];
+}
+async function showSpots(seq, o, spots){
+  spots = spots.sort((a,b)=>a.dist-b.dist).slice(0, MAX_SPOTS);
+  const [fc, drive] = await Promise.all([fetchForecast(spots), fetchDrive(o, spots)]);
+  if(seq!==loadSeq) return false;
+  state.drive = fc.map(f=>drive[spots.indexOf(f.spot)]);
+  state.forecast = fc; state.fetchedAt = Date.now();
+  render();
+  return true;
+}
+async function loadAll(){
+  const seq = ++loadSeq, o = state.origin, R = RADIUS_KM[state.maxDrive];
+  state.loadedRadius = R;
+  $("#list").innerHTML = `<div class="status">Finner spots innen ${R} km …</div>`;
+  $("#hero").innerHTML = `<div class="skel"></div>`;
+  const osmP = osmSpots(o, R).then(withFacing).catch(()=>[]);   // starter med en gang, venter ikke på den
+  try{
+    let spots = await withFacing(builtInSpots(o, R));
+    if(seq!==loadSeq) return;
+    if(!spots.length){
+      // Ingen kjente spots her: vent på OpenStreetMap
+      $("#list").innerHTML = `<div class="status">Ingen kjente spots innen ${R} km. Leter i OpenStreetMap …</div>`;
+      spots = await osmP;
+      if(seq!==loadSeq) return;
+      if(!spots.length){ state.forecast=[]; state.drive=[]; render(); renderEmpty(R); return; }
+      await showSpots(seq, o, spots);
+      return;
+    }
+    $("#list").innerHTML = `<div class="status">Henter varsel for ${spots.length} spots …</div>`;
+    if(!await showSpots(seq, o, spots)) return;
+    // Legg til OSM-spots hvis Overpass svarer
+    const extra = await osmP;
+    if(seq!==loadSeq || !extra.length) return;
+    const merged = merge(spots, extra);
+    if(merged.length > spots.length) await showSpots(seq, o, merged);
+  }catch(e){
+    console.error(e);
+    if(seq!==loadSeq) return;
+    $("#list").innerHTML = `<div class="status err">Fikk ikke hentet varselet. Sjekk nettet og trykk Oppdater.</div>`;
+    $("#hero").innerHTML = "";
+  }
+}
+function renderEmpty(R){
+  $("#hero").innerHTML = "";
+  $("#list").innerHTML = `<div class="status">Fant ingen spots ved havet innen ${R} km. Øk maks kjøretid eller søk et annet sted.</div>`;
+}
+
+// ---------- Oppstart ----------
+renderLegend();
+$("#skill").value = state.skill; $("#maxDrive").value = state.maxDrive; $("#when").value = state.when;
+$("#skill").onchange = e=>{ state.skill = e.target.value; store.set("skill",state.skill); render(); };
+$("#when").onchange = e=>{ state.when = e.target.value; store.set("when",state.when); render(); };
+$("#maxDrive").onchange = e=>{
+  state.maxDrive = +e.target.value; store.set("maxDrive",state.maxDrive);
+  if(RADIUS_KM[state.maxDrive] > state.loadedRadius) loadAll(); else render();
+};
+$("#refresh").onclick = async ()=>{ if(state.origin?.gps){ const g = await locate(); if(g) setOrigin(g); } loadAll(); };
+$("#gps").onclick = async ()=>{
+  $("#whereTxt").textContent = "Finner posisjonen din …";
+  const g = await locate();
+  if(g){ setOrigin(g); loadAll(); }
+  else { $("#whereTxt").innerHTML = `<span class="err">Fikk ikke posisjon. Tillat posisjon i nettleseren, eller søk sted under.</span>`; }
+};
+$("#searchForm").onsubmit = async e=>{
+  e.preventDefault();
+  const q = $("#q").value.trim(); if(!q) return;
+  $("#whereTxt").textContent = "Søker …";
+  try{ const p = await geocode(q); if(p){ setOrigin(p); $("#q").value=""; loadAll(); } else $("#whereTxt").innerHTML = `<span class="err">Fant ikke «${esc(q)}»</span>`; }
+  catch(err){ $("#whereTxt").innerHTML = `<span class="err">Søket feilet. Prøv igjen.</span>`; }
+};
+
+(async ()=>{
+  // #Ericeira i lenken starter fra det stedet uten å spørre om posisjon
+  const hash = decodeURIComponent(location.hash.slice(1));
+  if(hash){ const p = await geocode(hash).catch(()=>null); if(p){ setOrigin(p); return loadAll(); } }
+  const g = await locate();
+  if(g) setOrigin(g);
+  else {
+    const last = store.get("origin");
+    if(last && last.lat!=null) setOrigin(last);
+    else { setOrigin({name:"Oslo",lat:59.913,lon:10.752}); $("#whereTxt").innerHTML = `<span class="err">Fikk ikke posisjon.</span> Viser Oslo. Søk sted eller trykk «Bruk min posisjon».`; }
+  }
+  loadAll();
+})();
+</script>
+</body>
+</html>
