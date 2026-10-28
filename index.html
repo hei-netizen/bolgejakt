@@ -7,79 +7,53 @@
 <meta name="apple-mobile-web-app-title" content="Bølgejakt">
 <meta name="theme-color" content="#0f2a3d">
 <title>Bølgejakt</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <style>
-/* Layout: sjøkart-estetikk. Ett «beste valg» øverst, deretter rangert liste med 3-døgns stripe per spot. */
+/* Enkel og stram: rette kanter, vanlig skrift, én blå farge. Beste valg → varseltabell → spotliste. */
 :root{
-  --bg:#eef1f4; --surface:#ffffff; --shallow:#dde6ef; --line:#d3d8de;
-  --ink:#16213a; --muted:#5b6676; --accent:#2a4fc9;
-  --s0:#b9c1ca; --s1:#8fb0d6; --s2:#3a9aa8; --s3:#3d9b4f; --s4:#2a4fc9;
-  --star:#e2a400;
-  --display:"Archivo","Helvetica Neue",Arial,sans-serif;
-  --body:"Helvetica Neue",Arial,sans-serif;
-  --mono:"Helvetica Neue",Arial,sans-serif;
+  --bg:#ffffff; --surface:#ffffff; --line:#cfd4da; --soft:#f1f3f5;
+  --ink:#1b1f24; --muted:#5f6973; --accent:#2a4fc9; --accent-ink:#ffffff;
+  --body:"Helvetica Neue",Helvetica,Arial,sans-serif;
   color-scheme:light;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
-body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15px;line-height:1.45;
-  padding:max(14px,env(safe-area-inset-top)) 16px max(28px,env(safe-area-inset-bottom));-webkit-font-smoothing:antialiased}
-.wrap{max-width:980px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:18px}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:14px;line-height:1.4;
+  padding:max(12px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom))}
+.wrap{max-width:980px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr);gap:16px}
 .wrap>*{min-width:0}
-header.top{display:grid;gap:10px}
-.toprow{display:flex;align-items:baseline;justify-content:space-between;gap:12px}
-.brand{font-family:var(--display);font-variation-settings:"wdth" 125;font-weight:800;font-size:22px;letter-spacing:-.01em;margin:0}
-.brand span{color:var(--accent)}
-.where{font-size:13px;color:var(--muted);display:flex;gap:8px;align-items:center;flex-wrap:wrap;min-width:0}
-.where b{color:var(--ink);font-weight:600}
-button,select,input{font:inherit;color:inherit}
-.btn{background:transparent;border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;font-size:13px}
+button,select,input{font:inherit;color:inherit;border-radius:0}
+a{color:var(--accent)}
+
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px 16px;border-bottom:2px solid var(--ink);padding-bottom:10px}
+.brand{margin:0;font-size:20px;font-weight:700;letter-spacing:-.01em}
+.where{display:flex;align-items:center;gap:8px;flex-wrap:wrap;color:var(--muted);min-width:0}
+.where b{color:var(--ink)}
+.search{display:flex;gap:0;flex:1 1 220px;min-width:0}
+.search input{flex:1;min-width:0;border:1px solid var(--line);padding:6px 8px;background:#fff}
+.btn{background:#fff;border:1px solid var(--line);padding:6px 10px;cursor:pointer;white-space:nowrap}
 .btn:hover{border-color:var(--ink)}
-.btn:focus-visible,select:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.search{display:flex;gap:8px;min-width:0}
-.search input{flex:1;min-width:0;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px}
-.search .btn{border-radius:8px}
+.search .btn{border-left:0}
+.btn:focus-visible,select:focus-visible,input:focus-visible,tr.srow:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 
-.controls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
-.ctl{display:grid;gap:4px;min-width:0}
-.ctl label{font-size:11px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
-.ctl select{appearance:none;-webkit-appearance:none;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;
-  background-image:linear-gradient(45deg,transparent 50%,var(--muted) 50%),linear-gradient(135deg,var(--muted) 50%,transparent 50%);
-  background-position:calc(100% - 15px) 55%,calc(100% - 10px) 55%;background-size:5px 5px;background-repeat:no-repeat}
+.opts{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center}
+.opts label{display:flex;align-items:center;gap:6px;color:var(--muted)}
+.opts select{border:1px solid var(--line);background:#fff;padding:5px 6px;color:var(--ink)}
+.opts .btn{margin-left:auto}
 
-/* Hero */
-.hero{background:var(--ink);color:var(--bg);border-radius:18px;padding:20px;display:grid;gap:14px;position:relative;overflow:hidden}
-.hero::after{content:"";position:absolute;inset:auto -20% -60% -20%;height:120%;pointer-events:none;
-  background:repeating-radial-gradient(circle at 50% 100%,transparent 0 18px,color-mix(in srgb,var(--bg) 7%,transparent) 18px 19px)}
-.hero>*{position:relative;z-index:1}
-.eyebrow{font-size:11px;text-transform:uppercase;letter-spacing:.12em;opacity:.7}
-.hero-main{display:flex;justify-content:space-between;gap:16px;align-items:flex-end}
-.hero-main>div:first-child{min-width:0}
-.hero h2{font-family:var(--display);font-variation-settings:"wdth" 118;font-weight:800;font-size:clamp(28px,8vw,46px);line-height:.98;margin:2px 0 4px;text-wrap:balance;letter-spacing:-.02em;overflow-wrap:anywhere}
-.hero .region{opacity:.75;font-size:14px}
-.bigscore{text-align:right}
-.bigscore b{display:block;font-family:var(--display);font-variation-settings:"wdth" 70;font-weight:800;font-size:64px;line-height:.85;font-variant-numeric:tabular-nums}
-.bigscore small{font-size:12px;text-transform:uppercase;letter-spacing:.1em;opacity:.8}
-.plan{display:flex;gap:10px;flex-wrap:wrap}
-.chip{background:color-mix(in srgb,var(--bg) 12%,transparent);border-radius:10px;padding:8px 12px;display:grid;gap:1px;min-width:0}
-.chip span{font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.7}
-.chip b{font-size:16px;font-variant-numeric:tabular-nums}
-.chip.go{background:var(--accent);color:#fff}
-.conds{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;border-top:1px solid color-mix(in srgb,var(--bg) 20%,transparent);padding-top:12px}
-.cond span{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.08em;opacity:.65}
-.cond b{font-family:var(--mono);font-weight:500;font-size:14px}
-.cond i{display:block;font-style:normal;font-size:12px;opacity:.8}
-.hero .links{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
-.hero a{color:inherit}
-.hero svg .lbl{fill:currentColor;opacity:.6}
-.note{font-size:13px;opacity:.85;margin:0}
+/* Beste valg */
+.pick{background:var(--accent);color:var(--accent-ink);padding:14px 16px;display:grid;gap:8px}
+.pick .lbl{font-size:12px;text-transform:uppercase;letter-spacing:.06em;opacity:.85}
+.pick h2{margin:0;font-size:26px;line-height:1.1}
+.pick dl{margin:0;display:grid;grid-template-columns:auto 1fr;gap:3px 14px}
+.pick dt{opacity:.8}
+.pick dd{margin:0;font-weight:700}
+.pick a{color:#fff}
+.pick p{margin:0}
 
-/* Varseltabell */
-.fc{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;color:#222}
+/* Varseltabell *//* Varseltabell */
+.fc{background:#fff;border:1px solid var(--line);color:#222}
 .fc-head{padding:14px 16px 10px;display:grid;gap:4px}
-.fc-head h3{margin:0;font-family:var(--display);font-variation-settings:"wdth" 112;font-weight:800;font-size:22px;color:var(--ink)}
+.fc-head h3{margin:0;font-size:20px;color:var(--ink)}
 .fc-head .sub{font-size:13px;color:var(--muted)}
 .fc-head .links{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
 .fc-head a{color:var(--accent)}
@@ -115,110 +89,72 @@ table.fct{border-collapse:collapse;font-family:"Helvetica Neue",Arial,sans-serif
 .fct tr.sunset td{background:#151515;color:#fff;font-size:12px;font-weight:700;height:20px}
 .fct tr.sunrise th,.fct tr.sunset th{font-size:16px}
 .fc-legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:10px 16px 14px;font-size:11px;color:var(--muted);align-items:center}
-.fc-legend .sw{display:inline-block;width:18px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:3px}
+
 .fc-note{padding:0 16px 12px;font-size:12px;color:var(--muted);margin:0}
 
-/* Liste */
-.list-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
-.list-head h3{margin:0;font-family:var(--display);font-variation-settings:"wdth" 110;font-size:16px;font-weight:700}
-.list-head small{color:var(--muted);font-size:12px}
-.list{display:grid;gap:8px}
-.spot{background:var(--surface);border:1px solid var(--line);border-radius:12px;width:100%;text-align:left;cursor:pointer;
-  padding:12px 14px;display:grid;grid-template-columns:44px minmax(0,1fr) auto;gap:4px 12px;align-items:center}
-.spot:hover{border-color:var(--muted)}
-.spot.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
-.spot:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-.pill{width:44px;height:44px;border-radius:10px;display:grid;place-items:center;font-family:var(--display);font-variation-settings:"wdth" 75;font-weight:800;font-size:20px;color:#fff;font-variant-numeric:tabular-nums;grid-row:span 2}
-.sname{font-weight:700;font-size:16px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.sname em{font-style:normal;font-weight:400;color:var(--muted);font-size:13px;margin-left:6px}
-.smeta{font-size:13px;color:var(--muted);min-width:0}
-.sdrive{text-align:right;font-family:var(--mono);font-size:13px;white-space:nowrap}
-.sdrive small{display:block;color:var(--muted);font-family:var(--body);font-size:11px}
-.strip{grid-column:1/-1;margin-top:4px}
-.strip svg{width:100%;height:34px;display:block}
-.strip .lbl{fill:var(--muted)}
-.spot.out{opacity:.55}
-.detail{padding:0 14px 14px;display:grid;gap:10px}
-.tbl-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:8px}
-table{border-collapse:collapse;width:100%;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap}
-th,td{padding:5px 8px;text-align:right;border-bottom:1px solid var(--line)}
-th{font-family:var(--body);font-weight:600;color:var(--muted);font-size:11px;text-transform:uppercase;letter-spacing:.05em;background:var(--bg);position:sticky;top:0}
-td:first-child,th:first-child{text-align:left}
-tr.night td{opacity:.4}
-tr.best td{background:color-mix(in srgb,var(--accent) 12%,transparent)}
-.dot{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:-1px}
-.detail .links{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
-.detail a{color:var(--accent)}
-.spotnote{font-size:13px;color:var(--muted);margin:0}
-
-.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
-.status{font-size:13px;color:var(--muted);text-align:center;padding:24px 0}
-.err{color:var(--accent)}
-footer{font-size:12px;color:var(--muted);line-height:1.5}
-.skel{height:220px;border-radius:18px;background:linear-gradient(90deg,var(--shallow),var(--surface),var(--shallow));background-size:200% 100%;animation:sh 1.4s infinite linear}
-@keyframes sh{to{background-position:-200% 0}}
-@media (prefers-reduced-motion:reduce){.skel{animation:none}}
-@media (max-width:520px){
-  .conds{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .bigscore b{font-size:54px}
-}
+/* Spotliste */
+h2.sec{margin:8px 0 0;font-size:16px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line)}
+table.spots{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+.spots th,.spots td{padding:6px 8px;text-align:left;border-bottom:1px solid var(--line);white-space:nowrap}
+.spots th{background:var(--soft);font-weight:700;font-size:12px}
+.spots td.r{padding:2px 4px;width:40px}
+.spots td.r svg{display:block}
+.spots tr.srow{cursor:pointer}
+.spots tr.srow:hover td{background:var(--soft)}
+.spots tr.sel td{background:#e7edfb}
+.spots tr.out td{color:#9aa1a8}
+.spots td.name{font-weight:700;white-space:normal;min-width:130px}
+.spots td.name small{display:block;font-weight:400;color:var(--muted)}
+.status{color:var(--muted);padding:16px 0}
+.err{color:#b3261e}
+.skel{height:120px;background:var(--soft)}
+footer{font-size:12px;color:var(--muted)}
 </style>
 </head>
 <body>
 <div class="wrap">
-  <header class="top">
-    <div class="toprow">
-      <h1 class="brand">Bølge<span>jakt</span></h1>
-      <button class="btn" id="refresh" type="button">Oppdater</button>
-    </div>
+  <header class="bar">
+    <h1 class="brand">Bølgejakt</h1>
     <div class="where"><span id="whereTxt">Finner posisjonen din …</span>
-      <button class="btn" id="gps" type="button">Bruk min posisjon</button></div>
+      <button class="btn" id="gps" type="button">Min posisjon</button></div>
     <form class="search" id="searchForm">
-      <input id="q" type="search" placeholder="Eller søk sted: Ericeira, Hossegor, Stavanger …" autocomplete="off" aria-label="Søk sted">
+      <input id="q" type="search" placeholder="Søk sted" autocomplete="off" aria-label="Søk sted">
       <button class="btn" type="submit">Søk</button>
     </form>
   </header>
 
-  <div class="controls">
-    <div class="ctl"><label for="skill">Nivå</label>
+  <div class="opts">
+    <label for="skill">Nivå
       <select id="skill">
         <option value="nybegynner">Nybegynner</option>
         <option value="middels" selected>Middels</option>
         <option value="erfaren">Erfaren</option>
-      </select></div>
-    <div class="ctl"><label for="maxDrive">Maks kjøretid</label>
+      </select></label>
+    <label for="maxDrive">Maks kjøretid
       <select id="maxDrive">
         <option value="1">1 time</option>
         <option value="2">2 timer</option>
         <option value="4" selected>4 timer</option>
         <option value="8">8 timer</option>
-      </select></div>
-    <div class="ctl"><label for="when">Når</label>
+      </select></label>
+    <label for="when">Når
       <select id="when">
         <option value="today">I dag</option>
         <option value="tomorrow">I morgen</option>
         <option value="3d" selected>Neste 3 døgn</option>
-      </select></div>
+      </select></label>
+    <button class="btn" id="refresh" type="button">Oppdater</button>
   </div>
 
   <section id="hero"><div class="skel"></div></section>
 
   <section id="fc"></section>
 
-  <div class="list-head">
-    <h3>Spots i nærheten</h3>
-    <small>trykk på en spot for å se varselet</small>
-  </div>
-  <div class="legend" id="legend"></div>
-  <div class="list" id="list"><div class="status">Finner spots …</div></div>
+  <h2 class="sec">Spots i nærheten</h2>
+  <div id="list"><div class="status">Finner spots …</div></div>
 
-  <footer>
-    Spots: en innebygd liste med kjente surfespots verden over, håndlagde norske spots, og ekstra surfespots og strender fra OpenStreetMap når den svarer.
-    Bølger og vind: Open-Meteo. Tidevann: Kartverket i Norge, ellers Open-Meteo-modell. Kjøretid: OSRM, uten trafikk og ferjeventetid.
-    Score 0–10 vekter bølgehøyde mot nivået ditt, swell-retning mot det spoten tar imot, vind (fraland er best), periode, tidevann og dagslys.
-    Strender som ikke er kjente surfespots får 20 % trekk. Kjøretid trekker 0,6 poeng per time i rangeringen. Alle klokkeslett er lokal tid ved spoten.
-    <span id="stamp"></span>
-  </footer>
+  <footer>Data: Open-Meteo, Kartverket, OpenStreetMap/OSRM. Klokkeslett er lokal tid ved spoten. <span id="stamp"></span></footer>
 </div>
 
 <script>
@@ -750,108 +686,65 @@ function analyse(){
 }
 
 // ---------- Render ----------
-function strip(r, hero){
-  const now = Date.now(), tz = r.tz;
-  const n = state.when==="3d" ? 72 : 24;
-  let startIdx;
-  if(state.when==="3d") startIdx = r.scored.findIndex(h=>h.ms >= now-36e5);
-  else { const target = parts(state.when==="today"?now:now+864e5, tz).date; startIdx = r.scored.findIndex(h=>parts(h.ms,tz).date===target); }
-  if(startIdx<0) return "";
-  const hrs = r.scored.slice(startIdx, startIdx+n);
-  const W = n*4, Hh = 26;
-  const arrive = r.driveS!=null ? now + r.driveS*1000 : null;
-  let s = `<svg viewBox="0 0 ${W} ${Hh+10}" preserveAspectRatio="none" role="img" aria-label="Score time for time">`;
-  hrs.forEach((h,k)=>{
-    const p = parts(h.ms,tz);
-    const v = Math.max(h.score, h.day?0.25:0.15), bh = Math.max(1.5, v/10*Hh);
-    const fill = hero ? "currentColor" : band(h.score).c;
-    const op = h.day ? (hero ? (r.best && h.ms>=r.best.start && h.ms<=r.best.end ? 1 : .55) : 1) : .18;
-    s += `<rect x="${k*4+.4}" y="${Hh-bh}" width="3.2" height="${bh}" rx=".8" fill="${fill}" opacity="${op}"/>`;
-    if(p.h===0 && k>0) s += `<rect x="${k*4-.3}" y="0" width=".6" height="${Hh+10}" fill="currentColor" opacity=".25"/>`;
-    if(p.h===12) s += `<text x="${k*4}" y="${Hh+9}" font-size="7" text-anchor="middle" class="lbl" font-family="Archivo,sans-serif">${dayName(p.date)}</text>`;
-    if(arrive && arrive>=h.ms && arrive<h.ms+36e5) s += `<path d="M${k*4+2} ${Hh+1} l-2 3 h4z" fill="${hero?"currentColor":"var(--ink)"}"/>`;
-  });
-  return s + `</svg>`;
-}
-
-function condsFor(r, h){
-  const wk = h.ws!=null ? windKind(r.spot,h.ws,h.wd) : "";
-  const sun = r.sun[parts(h.ms,r.tz).date];
-  return `
-    <div class="cond"><span>Bølger</span><b>${h.h.toFixed(1)} m · ${Math.round(h.per)} s</b><i>fra ${compass(h.dir)}</i></div>
-    <div class="cond"><span>Vind</span><b>${h.ws!=null?Math.round(h.ws):"–"} m/s</b><i>${h.wd!=null?"fra "+compass(h.wd)+", ":""}${wk}</i></div>
-    <div class="cond"><span>Tidevann</span><b>${h.tide!=null?Math.round(h.tide*100)+" cm":"–"}</b><i>${h.tideTrend}${r.spot.tide!=="alle"?", liker "+r.spot.tide:""}</i></div>
-    <div class="cond"><span>Dagslys</span><b>${sun?parts(sun[0],r.tz).hm+"–"+parts(sun[1],r.tz).hm:"–"}</b><i>sol opp/ned</i></div>`;
-}
-
 function links(r){
   const {lat,lon,name} = r.spot;
   return `<a href="https://www.google.com/maps/dir/?api=1&destination=${lat},${lon}" target="_blank" rel="noopener">Veibeskrivelse</a>
-    <a href="https://www.windy.com/?waves,${lat},${lon},9" target="_blank" rel="noopener">Bølgekart (Windy)</a>
+    <a href="https://www.windy.com/?waves,${lat},${lon},9" target="_blank" rel="noopener">Windy</a>
     <a href="https://www.google.com/search?q=${encodeURIComponent("surf-forecast "+name)}" target="_blank" rel="noopener">Surf-forecast</a>`;
 }
 const hourEnd = (ms,tz) => parts(ms+36e5,tz).hm;
 const driveTxt = r => r.driveS!=null ? (r.driveEst?"ca. ":"")+fmtDur(r.driveS) : "ingen bilvei";
+const windShort = (spot,h) => h.ws==null ? "–" : `${Math.round(h.ws)} m/s ${h.ws>=2?compass(h.wd):""}`;
 
 function renderHero(rows){
   const el = $("#hero");
-  const ranked = rows.filter(r=>r.best && r.inRange).sort((a,b)=>b.value-a.value);
-  const top = ranked[0];
+  const top = rows.filter(r=>r.best && r.inRange).sort((a,b)=>b.value-a.value)[0];
   if(!top || top.best.score < 1.5){
     const any = rows.filter(r=>r.best).sort((a,b)=>b.best.score-a.best.score)[0];
-    el.innerHTML = `<div class="hero"><div class="eyebrow">Beste valg</div>
-      <h2>Ingenting verdt det innen ${state.maxDrive} t</h2>
-      <p class="note">${any && any.best.score>=1.5 ? `Beste i nærheten er <b>${esc(any.spot.name)}</b> (${any.best.score.toFixed(1)}), ${driveTxt(any)} unna. Øk maks kjøretid for å ta den med.` : "Ingen spots ser surfbare ut i perioden. Prøv «Neste 3 døgn» eller et annet nivå."}</p></div>`;
+    el.innerHTML = `<div class="pick"><div class="lbl">Beste valg</div><h2>Ingenting verdt det innen ${state.maxDrive} t</h2>
+      <p>${any && any.best.score>=1.5 ? `Beste i nærheten er ${esc(any.spot.name)} (${Math.round(any.best.score)}/10), ${driveTxt(any)} unna.` : "Ingen spots ser surfbare ut i perioden."}</p></div>`;
     return;
   }
-  const r = top, b = r.best, h = r.scored[b.i], bd = band(b.score), tz = r.tz;
-  const leaveMs = b.start - (r.driveS||0)*1000;
-  const leaveNow = leaveMs <= Date.now()+10*60e3;
-  el.innerHTML = `<div class="hero">
-    <div class="eyebrow">Beste valg ${state.when==="today"?"i dag":state.when==="tomorrow"?"i morgen":"neste 3 døgn"}</div>
-    <div class="hero-main">
-      <div><h2>${esc(r.spot.name)}</h2><div class="region">${esc(r.spot.region)}${r.dist!=null?` · ${Math.round(r.dist/1000)} km`:""}</div></div>
-      <div class="bigscore"><b>${b.score.toFixed(1)}</b><small>${bd.t}</small></div>
-    </div>
-    <div class="plan">
-      <div class="chip"><span>Beste vindu</span><b>${dayLabel(b.start,tz)} ${parts(b.start,tz).hm}–${hourEnd(b.end,tz)}</b></div>
-      <div class="chip"><span>Kjøretid</span><b>${driveTxt(r)}</b></div>
-      <div class="chip go"><span>Dra</span><b>${leaveNow?"Nå":dayLabel(leaveMs,tz)+" "+parts(leaveMs,tz).hm}</b></div>
-    </div>
-    <div>${strip(r,true)}</div>
-    <div class="conds">${condsFor(r,h)}</div>
-    <div class="links">${links(r)}</div>
+  const r = top, b = r.best, h = r.scored[b.i], tz = r.tz;
+  const leaveMs = b.start - (r.driveS||0)*1000, leaveNow = leaveMs <= Date.now()+10*60e3;
+  const wk = h.ws!=null ? windKind(r.spot,h.ws,h.wd) : "";
+  el.innerHTML = `<div class="pick">
+    <div class="lbl">Beste valg</div>
+    <h2>${esc(r.spot.name)}</h2>
+    <dl>
+      <dt>Når</dt><dd>${dayLabel(b.start,tz)} ${parts(b.start,tz).hm}–${hourEnd(b.end,tz)}</dd>
+      <dt>Dra</dt><dd>${leaveNow?"Nå":dayLabel(leaveMs,tz)+" "+parts(leaveMs,tz).hm} (${driveTxt(r)} kjøring)</dd>
+      <dt>Bølger</dt><dd>${h.h.toFixed(1)} m, ${Math.round(h.per)} s fra ${compass(h.dir)}</dd>
+      <dt>Vind</dt><dd>${windShort(r.spot,h)}${wk?", "+wk:""}</dd>
+      <dt>Rating</dt><dd>${Math.round(b.score)} av 10</dd>
+    </dl>
   </div>`;
 }
 
-function starsHtml(score){
-  const n = clamp(Math.round(score/2),0,5);
-  return `<span class="stars" aria-label="${n} av 5 stjerner">${"★".repeat(n)}<i>${"★".repeat(5-n)}</i></span>`;
-}
-
 function renderList(rows){
-  const sorted = [...rows].sort((a,b)=> (b.inRange-a.inRange) || (b.value-a.value));
-  if(!sorted.length){ $("#list").innerHTML = `<div class="status">Fant ingen spots ved havet innen ${RADIUS_KM[state.maxDrive]} km. Øk maks kjøretid eller søk et annet sted.</div>`; return; }
-  $("#list").innerHTML = sorted.map(r=>{
-    const sc = r.best ? r.best.score : 0, bd = band(sc);
-    const h = r.best ? r.scored[r.best.i] : null;
-    const meta = h ? `${starsHtml(sc)} ${dayLabel(r.best.start,r.tz)} ${parts(r.best.start,r.tz).hm} · ${h.h.toFixed(1)} m ${Math.round(h.per)} s ${compass(h.dir)} · vind ${Math.round(h.ws)} m/s ${h.ws>=2?compass(h.wd):""}`
-                   : "Ingen dagslys-timer etter at du er fremme";
-    return `<button type="button" class="spot${r.inRange?"":" out"}${state.selId===r.spot.id?" sel":""}" data-id="${r.spot.id}">
-        <span class="pill" style="background:${bd.c}">${sc.toFixed(1)}</span>
-        <span class="sname">${esc(r.spot.name)}<em>${esc(r.spot.region)}</em></span>
-        <span class="sdrive" style="grid-row:span 2">${driveTxt(r)}<small>${r.inRange?"kjøretid":"for langt"}</small></span>
-        <span class="smeta">${meta}</span>
-        <span class="strip">${strip(r,false)}</span>
-      </button>`;
-  }).join("");
-  document.querySelectorAll("button.spot").forEach(btn=>{
-    btn.onclick = ()=>{
-      state.selId = btn.dataset.id;
-      document.querySelectorAll("button.spot").forEach(x=>x.classList.toggle("sel", x===btn));
+  const sorted = rows.filter(r=>r.inRange).sort((a,b)=>b.value-a.value);
+  if(!sorted.length){ $("#list").innerHTML = `<div class="status">Fant ingen spots innen ${state.maxDrive} t kjøring. Øk maks kjøretid eller søk et annet sted. Ingen spots ved havet innen ${RADIUS_KM[state.maxDrive]} km. Øk maks kjøretid eller søk et annet sted.</div>`; return; }
+  $("#list").innerHTML = `<div class="tablewrap"><table class="spots">
+    <thead><tr><th>Spot</th><th>Rating</th><th>Beste tid</th><th>Bølger</th><th>Vind</th><th>Kjøretid</th></tr></thead>
+    <tbody>${sorted.map(r=>{
+      const sc = r.best ? r.best.score : 0, h = r.best ? r.scored[r.best.i] : null;
+      return `<tr class="srow${r.inRange?"":" out"}${state.selId===r.spot.id?" sel":""}" data-id="${r.spot.id}" tabindex="0">
+        <td class="name">${esc(r.spot.name)}<small>${esc(r.spot.region)}</small></td>
+        <td class="r">${starSvg(Math.round(sc))}</td>
+        <td>${h ? dayLabel(r.best.start,r.tz)+" "+parts(r.best.start,r.tz).hm : "–"}</td>
+        <td>${h ? `${h.h.toFixed(1)} m ${Math.round(h.per)} s ${compass(h.dir)}` : "–"}</td>
+        <td>${h ? windShort(r.spot,h) : "–"}</td>
+        <td>${driveTxt(r)}</td>
+      </tr>`; }).join("")}</tbody></table></div>`;
+  document.querySelectorAll("tr.srow").forEach(tr=>{
+    const pick = ()=>{
+      state.selId = tr.dataset.id;
+      document.querySelectorAll("tr.srow").forEach(x=>x.classList.toggle("sel", x===tr));
       renderForecast(rows.find(r=>r.spot.id===state.selId));
       $("#fc").scrollIntoView({behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block:"start"});
     };
+    tr.onclick = pick;
+    tr.onkeydown = e=>{ if(e.key==="Enter"||e.key===" "){ e.preventDefault(); pick(); } };
   });
 }
 
@@ -961,11 +854,6 @@ function renderForecast(r){
   if(best && sc) sc.scrollLeft = Math.max(0, best.offsetLeft - 150);
 }
 
-function renderLegend(){
-  $("#legend").innerHTML = [[7,"Episk 7+"],[5,"Bra 5–7"],[3,"Surfbart 3–5"],[1.5,"Svakt 1,5–3"],[0,"Dårlig"]]
-    .map(([v,t])=>`<span><span class="dot" style="background:${band(v).c}"></span>${t}</span>`).join("") + `<span>▲ = når du er fremme hvis du drar nå</span>`;
-}
-
 function render(){
   if(!state.forecast) return;
   const rows = analyse();
@@ -1048,7 +936,6 @@ function renderEmpty(R){
 }
 
 // ---------- Oppstart ----------
-renderLegend();
 $("#skill").value = state.skill; $("#maxDrive").value = state.maxDrive; $("#when").value = state.when;
 $("#skill").onchange = e=>{ state.skill = e.target.value; store.set("skill",state.skill); render(); };
 $("#when").onchange = e=>{ state.when = e.target.value; store.set("when",state.when); render(); };
