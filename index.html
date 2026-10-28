@@ -13,31 +13,14 @@
 <style>
 /* Layout: sjøkart-estetikk. Ett «beste valg» øverst, deretter rangert liste med 3-døgns stripe per spot. */
 :root{
-  --bg:#f3f7f9; --surface:#ffffff; --shallow:#d7e9f2; --line:#c9d8e0;
-  --ink:#0f2a3d; --muted:#5a7183; --accent:#a3146f;
-  --s0:#b9c4cb; --s1:#8fb3c9; --s2:#2f9a9a; --s3:#2f8f4e; --s4:#a3146f;
-  --w0:#eef3f6; --w1:#d5e9f4; --w2:#acd8ec; --w3:#7fcac3; --w4:#a3d67f; --w5:#f3d65e; --w6:#f39a5c;
-  --off:#2f9a55; --cross:#d9a520; --on:#cf4a45; --calm:#8aa7b5; --star:#e2a400; --night:#e4ebef;
+  --bg:#eef1f4; --surface:#ffffff; --shallow:#dde6ef; --line:#d3d8de;
+  --ink:#16213a; --muted:#5b6676; --accent:#2a4fc9;
+  --s0:#b9c1ca; --s1:#8fb0d6; --s2:#3a9aa8; --s3:#3d9b4f; --s4:#2a4fc9;
+  --star:#e2a400;
   --display:"Archivo","Helvetica Neue",Arial,sans-serif;
-  --body:"Archivo","Helvetica Neue",Arial,sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+  --body:"Helvetica Neue",Arial,sans-serif;
+  --mono:"Helvetica Neue",Arial,sans-serif;
   color-scheme:light;
-}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#08151d; --surface:#0f2230; --shallow:#14354a; --line:#1f3a4c;
-  --ink:#d9e7ee; --muted:#86a0b0; --accent:#e765b4;
-  --s0:#3b4b55; --s1:#3f6f8c; --s2:#2fb3b0; --s3:#4cbb6e; --s4:#e765b4;
-  --w0:#11222c; --w1:#163749; --w2:#1b5068; --w3:#1d6763; --w4:#3a7330; --w5:#806b1c; --w6:#8a4520;
-  --off:#3fb46a; --cross:#d9ab2c; --on:#e0605a; --calm:#55707e; --star:#f0b81c; --night:#0b1a23;
-  color-scheme:dark;
-}}
-:root[data-theme="dark"]{
-  --bg:#08151d; --surface:#0f2230; --shallow:#14354a; --line:#1f3a4c;
-  --ink:#d9e7ee; --muted:#86a0b0; --accent:#e765b4;
-  --s0:#3b4b55; --s1:#3f6f8c; --s2:#2fb3b0; --s3:#4cbb6e; --s4:#e765b4;
-  --w0:#11222c; --w1:#163749; --w2:#1b5068; --w3:#1d6763; --w4:#3a7330; --w5:#806b1c; --w6:#8a4520;
-  --off:#3fb46a; --cross:#d9ab2c; --on:#e0605a; --calm:#55707e; --star:#f0b81c; --night:#0b1a23;
-  color-scheme:dark;
 }
 *{box-sizing:border-box}
 html,body{margin:0}
@@ -94,41 +77,45 @@ button,select,input{font:inherit;color:inherit}
 .note{font-size:13px;opacity:.85;margin:0}
 
 /* Varseltabell */
-.fc{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.fc{background:#fff;border:1px solid var(--line);border-radius:8px;overflow:hidden;color:#222}
 .fc-head{padding:14px 16px 10px;display:grid;gap:4px}
-.fc-head h3{margin:0;font-family:var(--display);font-variation-settings:"wdth" 112;font-weight:800;font-size:22px;letter-spacing:-.01em}
+.fc-head h3{margin:0;font-family:var(--display);font-variation-settings:"wdth" 112;font-weight:800;font-size:22px;color:var(--ink)}
 .fc-head .sub{font-size:13px;color:var(--muted)}
 .fc-head .links{display:flex;gap:14px;flex-wrap:wrap;font-size:13px}
 .fc-head a{color:var(--accent)}
 .fc-scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;border-top:1px solid var(--line)}
-table.fct{border-collapse:separate;border-spacing:0;font-family:var(--mono);font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap;width:max-content}
-.fct th,.fct td{padding:4px 2px;text-align:center;min-width:46px;border-bottom:1px solid var(--line)}
-.fct th.lab{position:sticky;left:0;z-index:2;background:var(--surface);text-align:left;padding:4px 10px;min-width:92px;font-family:var(--body);font-weight:600;font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;border-right:1px solid var(--line)}
-.fct thead th{font-family:var(--body)}
-.fct th.day{background:var(--ink);color:var(--bg);text-align:left;padding:6px 8px;font-size:13px;font-weight:700;border-left:2px solid var(--surface)}
-.fct th.day .dl{position:sticky;left:100px;display:inline-block}
-.fct th.day small{font-weight:400;opacity:.7;margin-left:6px;font-size:11px}
-.fct tr.time td{font-weight:500;color:var(--muted);font-size:11px}
-.fct td.dstart{border-left:2px solid var(--line)}
-.fct td.night{background:var(--night)}
-.fct td.night>*{opacity:.55}
+table.fct{border-collapse:collapse;font-family:"Helvetica Neue",Arial,sans-serif;font-size:13px;font-variant-numeric:tabular-nums;white-space:nowrap;width:max-content;color:#222}
+.fct th{text-transform:none;letter-spacing:0;color:#222;position:static;background:none;font-family:inherit}
+.fct td{min-width:52px;padding:2px 1px;text-align:center;vertical-align:middle}
+.fct th.lab{position:sticky !important;left:0;z-index:2;background:#fff;text-align:right;padding:3px 8px;min-width:100px;font-weight:400;font-size:12px;color:#333;border-right:1px solid #c9cdd2;line-height:1.2}
+.fct th.lab small{display:block;font-size:10px;color:#666}
+.fct th.day{text-align:center;font-size:14px;font-weight:700;line-height:1.15;padding:6px 0 2px;border-left:1px solid #c9cdd2;background:#fff}
+.fct th.day span{display:block;font-weight:700}
+.fct th.day.alt,.fct tr.time td.alt{background:#eceef1}
+.fct td.dstart{border-left:1px solid #c9cdd2}
+.fct tr.time td{font-size:13px;color:#222;padding:2px 1px 6px}
+.fct tr.sep td,.fct tr.sep th{border-top:1px solid #e3e6ea}
 .fct td.best{box-shadow:inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent)}
-.fct tr:first-child td.best,.fct tr.time td.best{box-shadow:inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent),inset 0 2px 0 var(--accent)}
+.fct tr.time td.best{box-shadow:inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent),inset 0 2px 0 var(--accent)}
 .fct tr:last-child td.best{box-shadow:inset 2px 0 0 var(--accent),inset -2px 0 0 var(--accent),inset 0 -2px 0 var(--accent)}
-.stars{color:var(--star);font-size:10px;letter-spacing:-1px;font-family:var(--body)}
-.stars i{font-style:normal;opacity:.22}
-.fct td.wave{font-weight:500;font-size:13px;color:var(--ink)}
-.fct .arr{display:block;margin:0 auto}
-.fct .cmp{display:block;font-size:10px;color:var(--muted)}
-.wbub{display:inline-grid;place-items:center;width:30px;height:30px;border-radius:50%;color:#fff;font-weight:500;position:relative}
-.wbub .arr{position:absolute;inset:0;margin:auto;opacity:.5}
-.wbub b{position:relative;font-weight:600}
-.fct td.wk{font-family:var(--body);font-size:10px;color:var(--muted)}
-.fct td.tidecell{font-size:11px}
-.fct td.hl{font-family:var(--body);font-size:10px;line-height:1.2}
-.fct td.hl b{display:block;font-size:11px}
+.fct svg{display:block;margin:0 auto}
+.fct td.dir{font-size:13px;color:#222;padding-top:0}
+.fct td.per{font-weight:700;font-size:14px}
+.fct td.graph{padding:0;height:78px;vertical-align:bottom;background:linear-gradient(#fdfdfd,#b9bcc0)}
+.fct td.kj{color:#fff;font-weight:700;font-size:13px;padding:4px 1px}
+.fct td.ws{font-size:12px;line-height:1.1;height:40px;padding:2px}
+.ws-off{background:#3c9b47;color:#fff}.ws-xoff{background:#8cc152;color:#14310f}.ws-x{background:#c9cdd1;color:#222}
+.ws-xon{background:#8b9097;color:#fff}.ws-on{background:#5b6068;color:#fff}.ws-calm{background:#e6f2df;color:#2b4a24}
+.fct td.tide{font-size:11px;line-height:1.25;background:#f4f8fd}
+.fct td.tide b{display:block;color:#2f62c0;font-weight:700}
+.fct td.wx{font-size:22px;line-height:1;height:34px}
+.fct td.temp{font-weight:700}
+.fct td.rain{color:#2f62c0;font-size:12px}
+.fct tr.sunrise td{background:#fbf3a0;font-size:12px;font-weight:700;height:20px}
+.fct tr.sunset td{background:#151515;color:#fff;font-size:12px;font-weight:700;height:20px}
+.fct tr.sunrise th,.fct tr.sunset th{font-size:16px}
 .fc-legend{display:flex;flex-wrap:wrap;gap:6px 14px;padding:10px 16px 14px;font-size:11px;color:var(--muted);align-items:center}
-.fc-legend .sw{display:inline-block;width:18px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:3px;border:1px solid var(--line)}
+.fc-legend .sw{display:inline-block;width:18px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:3px}
 .fc-note{padding:0 16px 12px;font-size:12px;color:var(--muted);margin:0}
 
 /* Liste */
@@ -258,7 +245,7 @@ const CURATED = [
 ].map(s=>({...s, kind:"surf", curated:true, tideApi:true}));
 
 // ---------- Kjente surfespots i resten av verden ----------
-// navn|breddegrad|lengdegrad|område|retning stranden vender mot havet (grader, omtrentlig)
+// navn|breddegrad|lengdegrad|område|retning mot havet (grader, omtrentlig)|eksponering 0–1|maks høyde m|bruddkvalitet 0–1|merknad (de fire siste er valgfrie)
 const WORLD_RAW = `Klitmøller|57.040|8.490|Danmark|315
 Hanstholm|57.120|8.620|Danmark|340
 Vorupør|56.960|8.360|Danmark|280
@@ -431,9 +418,14 @@ Echo Beach, Canggu|-8.655|115.125|Bali|220
 Keramas|-8.600|115.340|Bali|160
 Nusa Dua|-8.800|115.240|Bali|100
 Medewi|-8.420|114.810|Bali|210
-Desert Point|-8.750|115.830|Lombok|300
-Selong Belanak|-8.870|116.150|Lombok|190
-Gerupuk|-8.920|116.350|Lombok|180
+Desert Point|-8.750|115.830|Lombok|300|1|4|1|Lang venstre over rev. Trenger stor sørvest-swell, best på lavvann. For erfarne.
+Mawi|-8.905|116.105|Lombok|205|1|3.5|1|Rev med venstre og høyre, kan gi tønner. Liker sørvest-swell og vind fra nord/nordøst. Sterk strøm, for erfarne.
+Are Guling|-8.912|116.240|Lombok|190|0.9|3|0.9|Rev ved stranden, både høyre og venstre. Båt eller padling ut.
+Selong Belanak|-8.870|116.150|Lombok|190|0.7|2|0.7|Sandstrand i en bukt. Snille bølger, populær for nybegynnere.
+Seger|-8.906|116.296|Lombok|190|0.9|3|0.85|Rev rett øst for Kuta Lombok. Flere topper, både høyre og venstre.
+Tanjung Aan (Aan Right)|-8.912|116.325|Lombok|180|0.85|3|0.85|Høyre over rev ytterst i Tanjung Aan-bukta. Båt fra Gerupuk eller padling.
+Gerupuk|-8.920|116.350|Lombok|180|0.65|3.5|0.9|Flere rev inne i Gerupuk-bukta (Inside, Outside, Don Don). Skjermet, så den får mindre swell og tåler store dager. Båt fra landsbyen.
+Ekas Outside|-8.880|116.445|Lombok|180|1|3.5|0.95|Åpen høyre over rev på østsiden av Ekas-bukta. Mer kraft enn Gerupuk.
 G-Land|-8.730|114.350|Java|180
 Batu Karas|-7.750|108.500|Java|200
 Lakey Peak|-8.800|118.380|Sumbawa|200
@@ -475,9 +467,10 @@ Wainui, Gisborne|-38.690|178.070|New Zealand|110
 Sumner, Christchurch|-43.570|172.760|New Zealand|90
 St Clair, Dunedin|-45.910|170.490|New Zealand|160
 Teahupoʻo|-17.860|-149.260|Tahiti|200`;
-const WORLD = WORLD_RAW.split("\n").map((l,i)=>{ const [name,lat,lon,region,f] = l.split("|"); const facing = +f;
-  return {id:"w"+i, name, lat:+lat, lon:+lon, region, kind:"surf", facing, swell:[(facing+290)%360,(facing+70)%360], tide:"alle", max:3.0,
-    note:`Kjent surfespot. Vender omtrent mot ${compass(facing)}.`}; });
+const WORLD = WORLD_RAW.split("\n").map((l,i)=>{ const [name,lat,lon,region,f,exp,max,q,note] = l.split("|"); const facing = +f;
+  return {id:"w"+i, name, lat:+lat, lon:+lon, region, kind:"surf", facing, swell:[(facing+290)%360,(facing+70)%360], tide:"alle",
+    exp: exp ? +exp : 1, max: max ? +max : 3.0, q: q ? +q : 1,
+    note: (note ? note+" " : "Kjent surfespot. ") + `Vender omtrent mot ${compass(facing)}.` + (exp && +exp<1 ? ` Skjermet: regner med ca. ${Math.round(+exp*100)} % av swellen ute på havet.` : "")}; });
 
 const SKILL = {
   nybegynner:{a:.3, b:.5, c:1.2, d:1.8},
@@ -536,7 +529,7 @@ function scoreHour(spot,h,skill,tideRange){
   if(h.h==null || h.dir==null) return {score:0, raw:0};
   const sk = SKILL[skill];
   const c = Math.min(sk.c, spot.max), d = Math.max(c+0.3, Math.min(sk.d, spot.max*1.4));
-  const size = trap(h.h, sk.a, Math.min(sk.b,c-0.05), c, d);
+  const size = trap(h.h*(spot.exp ?? 1), sk.a, Math.min(sk.b,c-0.05), c, d);
   const dir = inWindow(h.dir,spot.swell) ? 1 : clamp(1 - Math.min(angDiff(h.dir,spot.swell[0]),angDiff(h.dir,spot.swell[1]))/45, 0, 1);
   const per = clamp(0.3 + (h.per-4)*0.1, 0.3, 1);
   let wind = 1;
@@ -553,7 +546,7 @@ function scoreHour(spot,h,skill,tideRange){
     const raw = spot.tide==="lav" ? 1-n : spot.tide==="høy" ? n : 1-Math.abs(n-.5)*2;
     tide = 1 - clamp(tideRange/2, .1, .5)*(1-raw);
   }
-  const kind = spot.kind==="beach" ? BEACH_FACTOR : 1;
+  const kind = (spot.kind==="beach" ? BEACH_FACTOR : 1) * (spot.q ?? 1);
   const raw = 10*size*dir*per*wind*tide*kind;
   return {score: raw*(h.day?1:0), raw};
 }
@@ -664,7 +657,7 @@ async function fetchForecast(spots){
   const common = `latitude=${lat}&longitude=${lon}&timezone=auto&timeformat=unixtime&forecast_days=4`;
   const [marine, wx] = await Promise.all([
     getJSON(`https://marine-api.open-meteo.com/v1/marine?${common}&hourly=wave_height,wave_direction,wave_period,swell_wave_period,swell_wave_peak_period,sea_level_height_msl&cell_selection=sea`),
-    getJSON(`https://api.open-meteo.com/v1/forecast?${common}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m&daily=sunrise,sunset&wind_speed_unit=ms`)
+    getJSON(`https://api.open-meteo.com/v1/forecast?${common}&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code,temperature_2m,precipitation,is_day&daily=sunrise,sunset&wind_speed_unit=ms`)
   ]);
   const M = Array.isArray(marine)?marine:[marine], W = Array.isArray(wx)?wx:[wx];
   const tides = await Promise.all(spots.map(s=>s.tideApi ? fetchTide(s).catch(()=>null) : null));
@@ -696,6 +689,8 @@ function buildHours(spot, m, w, tide){
       ws: wi!=null ? w.hourly.wind_speed_10m[wi] : null,
       wd: wi!=null ? w.hourly.wind_direction_10m[wi] : null,
       gust: wi!=null ? w.hourly.wind_gusts_10m[wi] : null,
+      wcode: wi!=null ? w.hourly.weather_code[wi] : null, temp: wi!=null ? w.hourly.temperature_2m[wi] : null,
+      prec: wi!=null ? w.hourly.precipitation[wi] : null, isDay: wi!=null ? w.hourly.is_day[wi]===1 : true,
       tide: tl ?? null, day };
   });
   const tv = hours.map(h=>h.tide).filter(v=>v!=null);
@@ -861,21 +856,50 @@ function renderList(rows){
 }
 
 // ---------- Varseltabell (3-timers kolonner) ----------
-function waveColor(h){ const t=[.3,.6,1,1.5,2,3]; let i=t.findIndex(x=>h<x); if(i<0) i=6; return `var(--w${i})`; }
-function windColor(spot,ws,wd){
-  if(ws==null) return "var(--calm)";
-  const k = windKind(spot,ws,wd);
-  return k==="flau vind" ? "var(--calm)" : k==="fralandsvind" ? "var(--off)" : k==="sidevind" ? "var(--cross)" : "var(--on)";
+const BLUES = ["#9dbcf0","#6c95e6","#4677dd","#2a5ad0","#1c41b7","#132e98","#0b1d73"];
+const waveBlue = h => BLUES[Math.min(6, [.5,1,1.5,2,3,4].filter(x=>h>=x).length)];
+const kjBlue = e => BLUES[Math.min(6, [100,250,500,900,1500,2500].filter(x=>e>=x).length)];
+const energyKJ = (h,t) => Math.round(2.1*h*h*t*t);   // omtrentlig bølgeenergi
+const fmtM = v => v.toFixed(2).replace(".",",")+" m";
+const DAYFULL = ["Søndag","Mandag","Tirsdag","Onsdag","Torsdag","Fredag","Lørdag"];
+
+// Sirkel med spiss som peker dit bølgene/vinden går
+function notch(fromDeg, label, fill){
+  return `<svg viewBox="-20 -20 40 40" width="36" height="36" aria-hidden="true"><path transform="rotate(${Math.round(fromDeg+180)})" d="M0-19.5L7-10.95A13 13 0 1 1-7-10.95Z" fill="${fill}"/><text y="4.6" text-anchor="middle" fill="#fff" font-size="12.5" font-weight="700" font-family="Helvetica Neue,Arial,sans-serif">${label}</text></svg>`;
 }
-const WK_SHORT = {"flau vind":"flau","fralandsvind":"fraland","sidevind":"side","pålandsvind":"påland"};
-// Pila peker dit bølgene/vinden går (motsatt av «fra»-retningen)
-const arrowSvg = (fromDeg, size, fill) => `<svg class="arr" viewBox="-10 -10 20 20" width="${size}" height="${size}" style="transform:rotate(${Math.round(fromDeg+180)}deg)" aria-hidden="true"><path d="M0-9L6 6 0 2-6 6Z" fill="${fill}"/></svg>`;
+function starSvg(n){
+  const fill = n<=0?"#fff":n<=2?"#fff4c2":n<=4?"#ffe27a":n<=6?"#ffcc3d":n<=8?"#ffad1f":"#ff8a00";
+  return `<svg viewBox="0 0 24 24" width="34" height="34" aria-label="${n} av 10"><path d="M12 1.8l3.1 6.6 7.2.9-5.3 5 1.4 7.1L12 17.9l-6.4 3.5 1.4-7.1-5.3-5 7.2-.9z" fill="${fill}" stroke="#9aa3ad" stroke-width=".9" stroke-linejoin="round"/><text x="12" y="15.2" text-anchor="middle" font-size="7.5" font-weight="700" fill="#333" font-family="Helvetica Neue,Arial,sans-serif">${n}</text></svg>`;
+}
+const GRAPH_H = 78;
+const graphY = m => GRAPH_H*(1-Math.sqrt(Math.min(m,10)/10));
+function waveSvg(h){
+  const top = graphY(h), hp = Math.max(3, GRAPH_H-top), sy = hp/40;
+  return `<svg viewBox="0 0 52 ${GRAPH_H}" width="52" height="${GRAPH_H}" preserveAspectRatio="none" aria-hidden="true"><g transform="translate(2 ${top}) scale(1.2 ${sy})"><path d="M0 40C6 39 9 30 13 20C17 9 25 2 33 3C40 4 43 10 40 15C37 11 32 11 30 15C28 21 31 31 40 40Z" fill="${waveBlue(h)}"/><path d="M2 40C9 37 13 28 18 22C23 17 29 19 34 40Z" fill="#fff" opacity=".3"/></g></svg>`;
+}
+function graphScale(){
+  const t = [[10,"10m"],[5,"5m"],[3,"3m"],[1,"1m"],[0,"0m"]];
+  return `<svg viewBox="0 0 40 ${GRAPH_H}" width="40" height="${GRAPH_H}" style="display:inline-block;vertical-align:bottom;margin:0">`+
+    t.map(([m,l])=>`<text x="30" y="${Math.min(GRAPH_H-1,Math.max(8,graphY(m)+3))}" text-anchor="end" font-size="9" font-weight="700" fill="#333">${l}</text><rect x="32" y="${Math.min(GRAPH_H-1,graphY(m))}" width="6" height="1" fill="#333"/>`).join("")+
+    `<rect x="38" y="0" width="1" height="${GRAPH_H}" fill="#333"/></svg>`;
+}
+function windState(spot,ws,wd){
+  if(ws==null) return null;
+  if(ws<2) return ["flau","ws-calm"];
+  const r = windRel(spot,wd);
+  return r<=35?["fraland","ws-off"]:r<=75?["side-<br>fraland","ws-xoff"]:r<=105?["side","ws-x"]:r<=145?["side-<br>påland","ws-xon"]:["påland","ws-on"];
+}
+function wxIcon(c,day){
+  if(c==null) return "";
+  if(c===0) return day?"☀️":"🌙"; if(c===1) return day?"🌤️":"🌙"; if(c===2) return day?"⛅":"☁️"; if(c===3) return "☁️";
+  if(c<=48) return "🌫️"; if(c<=57) return "🌦️"; if(c<=67) return "🌧️"; if(c<=77) return "🌨️"; if(c<=82) return "🌦️"; if(c<=86) return "🌨️"; return "⛈️";
+}
 
 function renderForecast(r){
   const el = $("#fc");
   if(!r){ el.innerHTML = ""; return; }
-  const tz = r.tz, now = Date.now(), H = r.scored;
-  const cols = H.filter(h=>h.ms >= now-3*36e5 && parts(h.ms,tz).h % 3 === 0 && h.h!=null);
+  const tz = r.tz, now = Date.now(), H = r.scored, s = r.spot;
+  const cols = H.map((h,i)=>({...h,i})).filter(h=>h.ms >= now-3*36e5 && parts(h.ms,tz).h % 3 === 0 && h.h!=null);
   if(!cols.length){ el.innerHTML = ""; return; }
 
   // Høy- og lavvann fra timesserien
@@ -883,27 +907,24 @@ function renderForecast(r){
   for(let i=1;i<H.length-1;i++){
     const a=H[i-1].tide, b=H[i].tide, c=H[i+1].tide;
     if(a==null||b==null||c==null) continue;
-    if(b>=a && b>c) ext.push({ms:H[i].ms, t:"Høy", v:b});
-    else if(b<=a && b<c) ext.push({ms:H[i].ms, t:"Lav", v:b});
+    if(b>=a && b>c) ext.push({ms:H[i].ms, hi:true, v:b}); else if(b<=a && b<c) ext.push({ms:H[i].ms, hi:false, v:b});
   }
-  const extFor = c => ext.filter(e=>e.ms>=c.ms && e.ms<c.ms+3*36e5);
+  const inCol = (c,ms) => ms>=c.ms && ms<c.ms+3*36e5;
 
-  // Dager
   const days = [];
-  cols.forEach(c=>{ const d = parts(c.ms,tz).date; const last = days[days.length-1];
-    if(last && last.date===d) last.n++; else days.push({date:d, ms:c.ms, n:1}); });
-  const isStart = c => { const p = parts(c.ms,tz); return cols[0]!==c && p.h===0; };
+  cols.forEach(c=>{ const d = parts(c.ms,tz).date, last = days[days.length-1];
+    if(last && last.date===d) last.n++; else days.push({date:d, ms:c.ms, n:1}); c.dayIdx = days.length-1; });
   const inBest = c => r.best && c.ms + 3*36e5 > r.best.start && c.ms <= r.best.end;
-  const cls = (c, extra="") => `class="${[extra, isStart(c)?"dstart":"", c.day?"":"night", inBest(c)?"best":""].filter(Boolean).join(" ")}"`;
-
+  const cls = (c, extra="") => { const k = [extra, (c.dayIdx>0 && parts(c.ms,tz).h===0)?"dstart":"", inBest(c)?"best":""].filter(Boolean).join(" "); return k?`class="${k}"`:""; };
   const row = (label, fn, rowCls="") => `<tr${rowCls?` class="${rowCls}"`:""}><th class="lab" scope="row">${label}</th>${cols.map(fn).join("")}</tr>`;
-  const dayHead = days.map(d=>{
-    const sun = r.sun[d.date];
-    const lbl = dayLabel(d.ms,tz)+" "+(+d.date.slice(8,10))+".";
-    return `<th class="day" colspan="${d.n}"><span class="dl">${d.n>=2?lbl:dayName(d.date)}${sun && d.n>=4?`<small>☀ ${parts(sun[0],tz).hm}–${parts(sun[1],tz).hm}</small>`:""}</span></th>`;
-  }).join("");
 
-  const s = r.spot;
+  const dayHead = days.map((d,k)=>{
+    const [y,m,dd] = d.date.split("-").map(Number), wd = new Date(Date.UTC(y,m-1,dd)).getUTCDay();
+    return `<th class="day${k%2?" alt":""}" colspan="${d.n}"><span>${d.n>=2?DAYFULL[wd]:DAYFULL[wd].slice(0,3)}</span>${dd}</th>`;
+  }).join("");
+  const sunAt = (c, idx) => { const sun = r.sun[parts(c.ms,tz).date]; return sun && inCol(c, sun[idx]) ? parts(sun[idx],tz).hm : "–"; };
+  const rain = c => { let t=0, any=false; for(let k=0;k<3;k++){ const v = H[c.i+k]?.prec; if(v!=null){ t+=v; any=true; } } return any ? (t<0.1 ? "–" : t<1 ? t.toFixed(1).replace(".",",") : Math.round(t)) : "–"; };
+
   el.innerHTML = `<div class="fc">
     <div class="fc-head">
       <h3>${esc(s.name)}</h3>
@@ -913,26 +934,31 @@ function renderForecast(r){
     <div class="fc-scroll"><table class="fct">
       <thead><tr><th class="lab"></th>${dayHead}</tr></thead>
       <tbody>
-        ${row("Tid", c=>`<td ${cls(c)}>${parts(c.ms,tz).hm.slice(0,2)}</td>`, "time")}
-        ${row("Rating", c=>`<td ${cls(c)}>${starsHtml(c.raw)}</td>`)}
-        ${row("Bølger m", c=>`<td ${cls(c,"wave")} style="background:${waveColor(c.h)}">${c.h.toFixed(1)}</td>`)}
-        ${row("Swell", c=>`<td ${cls(c)}>${arrowSvg(c.dir, Math.round(clamp(12+c.h*4,12,26)), "var(--ink)")}<span class="cmp">${compass(c.dir)}</span></td>`)}
-        ${row("Periode s", c=>`<td ${cls(c)}>${Math.round(c.per)}</td>`)}
-        ${row("Vind m/s", c=>`<td ${cls(c)}>${c.ws==null?"–":`<span class="wbub" style="background:${windColor(s,c.ws,c.wd)}">${arrowSvg(c.wd,28,"#fff")}<b>${Math.round(c.ws)}</b></span>`}</td>`)}
-        ${row("Vindtype", c=>`<td ${cls(c,"wk")}>${c.ws==null?"–":WK_SHORT[windKind(s,c.ws,c.wd)]}</td>`)}
-        ${row("Kast m/s", c=>`<td ${cls(c)}>${c.gust==null?"–":Math.round(c.gust)}</td>`)}
-        ${row("Tidevann cm", c=>`<td ${cls(c,"tidecell")}>${c.tide==null?"–":Math.round(c.tide*100)+(c.tideTrend?(c.tideTrend==="stigende"?"↑":"↓"):"")}</td>`)}
-        ${row("Høy / lav", c=>`<td ${cls(c,"hl")}>${extFor(c).map(e=>`<b>${e.t}</b>${parts(e.ms,tz).hm}`).join("")}</td>`)}
+        ${row("", c=>`<td ${cls(c, c.dayIdx%2?"alt":"")}>${parts(c.ms,tz).hm.slice(0,2)}</td>`, "time")}
+        ${row(`Rating<small>(10 maks)</small>`, c=>`<td ${cls(c)}>${starSvg(Math.round(c.raw))}</td>`, "sep")}
+        ${row("Bølgehøyde (m)", c=>`<td ${cls(c)}>${notch(c.dir, c.h.toFixed(1), waveBlue(c.h))}</td>`, "sep")}
+        ${row("Retning", c=>`<td ${cls(c,"dir")}>${compass(c.dir)}</td>`)}
+        ${row("Periode (s)", c=>`<td ${cls(c,"per")}>${Math.round(c.per)}</td>`)}
+        ${row(`Bølgegraf ${graphScale()}`, c=>`<td ${cls(c,"graph")}>${waveSvg(c.h)}</td>`)}
+        ${row("Energi (kJ)", c=>{ const e = energyKJ(c.h,c.per); return `<td ${cls(c,"kj")} style="background:${kjBlue(e)}">${e}</td>`; })}
+        ${row("Vind (m/s)", c=>`<td ${cls(c)}>${c.ws==null?"–":notch(c.wd, Math.round(c.ws), "#151515")}</td>`, "sep")}
+        ${row("Vindretning", c=>`<td ${cls(c,"dir")}>${c.wd==null?"–":compass(c.wd)}</td>`)}
+        ${row("Vindtype", c=>{ const w = windState(s,c.ws,c.wd); return w ? `<td ${cls(c,"ws "+w[1])}>${w[0]}</td>` : `<td ${cls(c)}>–</td>`; })}
+        ${row("Høyvann", c=>`<td ${cls(c,"tide")}>${ext.filter(e=>e.hi && inCol(c,e.ms)).map(e=>`<b>${parts(e.ms,tz).hm}</b>${fmtM(e.v)}`).join("")}</td>`, "sep")}
+        ${row("Lavvann", c=>`<td ${cls(c,"tide")}>${ext.filter(e=>!e.hi && inCol(c,e.ms)).map(e=>`<b>${parts(e.ms,tz).hm}</b>${fmtM(e.v)}`).join("")}</td>`)}
+        ${row("Vær", c=>`<td ${cls(c,"wx")}>${wxIcon(c.wcode, c.isDay)}</td>`, "sep")}
+        ${row("Temp (°C)", c=>`<td ${cls(c,"temp")}>${c.temp==null?"–":Math.round(c.temp)}</td>`)}
+        ${row("Nedbør (mm)", c=>`<td ${cls(c,"rain")}>${rain(c)}</td>`)}
+        ${row("☀︎ opp", c=>`<td ${cls(c)}>${sunAt(c,0)}</td>`, "sunrise")}
+        ${row("☾ ned", c=>`<td ${cls(c)}>${sunAt(c,1)}</td>`, "sunset")}
       </tbody></table></div>
     <div class="fc-legend">
-      <span>Bølger:</span>${[[.2,"<0,3"],[.5,"0,3"],[.8,"0,6"],[1.2,"1"],[1.7,"1,5"],[2.5,"2"],[3.5,"3+"]].map(([v,t])=>`<span><span class="sw" style="background:${waveColor(v)}"></span>${t}</span>`).join("")}
-      <span>Vind:</span><span><span class="sw" style="background:var(--off)"></span>fraland</span><span><span class="sw" style="background:var(--cross)"></span>side</span><span><span class="sw" style="background:var(--on)"></span>påland</span><span><span class="sw" style="background:var(--calm)"></span>flau</span>
-      <span>Pilene viser hvor bølger og vind går. Rammen markerer beste vindu.</span>
+      <span>Spissen på sirklene peker dit bølgene og vinden går. Blå ramme = beste vindu. Bølgehøyde er modellens verdi ute på havet.</span>
     </div>
     <p class="fc-note">${esc(s.note)}</p>
   </div>`;
   const best = el.querySelector("td.best"), sc = el.querySelector(".fc-scroll");
-  if(best && sc) sc.scrollLeft = Math.max(0, best.offsetLeft - 140);
+  if(best && sc) sc.scrollLeft = Math.max(0, best.offsetLeft - 150);
 }
 
 function renderLegend(){
