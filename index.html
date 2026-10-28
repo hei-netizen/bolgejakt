@@ -402,7 +402,76 @@ Mount Maunganui|-37.630|176.180|New Zealand|30
 Wainui, Gisborne|-38.690|178.070|New Zealand|110
 Sumner, Christchurch|-43.570|172.760|New Zealand|90
 St Clair, Dunedin|-45.910|170.490|New Zealand|160
-Teahupoʻo|-17.860|-149.260|Tahiti|200`;
+Teahupoʻo|-17.860|-149.260|Tahiti|200
+Domes, Rincón|18.364|-67.270|Puerto Rico|290
+Tres Palmas|18.350|-67.265|Puerto Rico|270
+Maria's, Rincón|18.358|-67.268|Puerto Rico|300
+Wilderness, Aguadilla|18.480|-67.165|Puerto Rico|300
+Jobos, Isabela|18.513|-67.085|Puerto Rico|0
+La Pared, Luquillo|18.380|-65.720|Puerto Rico|30
+Soup Bowl, Bathsheba|13.214|-59.523|Barbados|80
+Freights Bay|13.060|-59.530|Barbados|180
+South Point|13.040|-59.530|Barbados|180
+Duppies|13.290|-59.650|Barbados|0
+Encuentro, Cabarete|19.770|-70.430|Den dominikanske republikk|0
+Bull Bay|17.940|-76.680|Jamaica|180
+Le Moule|16.330|-61.350|Guadeloupe|60
+Tartane|14.760|-60.880|Martinique|60
+El Paredón|13.920|-91.070|Guatemala|200
+El Tunco|13.490|-89.380|El Salvador|190
+Las Flores|13.170|-88.000|El Salvador|150
+Playa Venao|7.430|-80.190|Panama|180
+Bluff Beach, Bocas del Toro|9.400|-82.260|Panama|60
+Pascuales|18.830|-103.990|Mexico|220
+Punta de Mita|20.770|-105.520|Mexico|200
+Scorpion Bay|26.240|-112.480|Mexico|200
+Palomino|11.250|-73.560|Colombia|0
+Pipa|-6.230|-35.050|Brasil|90
+Reñaca, Viña del Mar|-32.970|-71.550|Chile|270
+Kalk Bay|-34.130|18.450|Sør-Afrika|100
+Long Beach, Kommetjie|-34.140|18.330|Sør-Afrika|280
+Big Bay|-33.790|18.450|Sør-Afrika|280
+Elands Bay|-32.310|18.340|Sør-Afrika|250
+Inner Pool, Mossel Bay|-34.180|22.150|Sør-Afrika|90
+Victoria Bay|-33.990|22.550|Sør-Afrika|150
+Nahoon Reef, East London|-32.990|27.950|Sør-Afrika|120
+Tofo|-23.850|35.550|Mosambik|110
+Tamarin|-20.330|57.370|Mauritius|270
+Saint-Leu|-21.170|55.280|Réunion|270
+Robertsport|6.750|-11.370|Liberia|250
+Bureh Beach|8.200|-13.220|Sierra Leone|270
+Ponta Preta, Sal|16.590|-22.930|Kapp Verde|270
+Galveston|29.270|-94.800|Texas|140
+South Padre Island|26.100|-97.160|Texas|90
+Sebastian Inlet|27.860|-80.450|Florida|80
+Jacksonville Beach|30.290|-81.390|Florida|90
+Wrightsville Beach|34.210|-77.790|North Carolina|120
+Virginia Beach|36.850|-75.970|Virginia|90
+Manasquan|40.100|-74.030|New Jersey|100
+Narragansett|41.430|-71.460|Rhode Island|160
+Higgins Beach|43.560|-70.280|Maine|150
+Seaside|46.000|-123.930|Oregon|270
+Hanalei Bay|22.210|-159.500|Hawaii|0
+Banyans, Kona|19.600|-155.980|Hawaii|270
+Surfyy Beach, Yangyang|38.030|128.710|Sør-Korea|90
+Songjeong, Busan|35.180|129.200|Sør-Korea|150
+Wushi Harbor|24.870|121.840|Taiwan|90
+Mui Ne|10.930|108.280|Vietnam|130
+Cherating|4.130|103.390|Malaysia|90
+Krui|-5.230|103.930|Sumatra|220
+Lagundri Bay, Nias|-0.570|97.750|Sumatra|200
+Pacitan|-8.220|111.100|Java|180
+Sabang Beach, Baler|15.770|121.570|Filippinene|90
+Liwliwa, Zambales|15.080|120.010|Filippinene|270
+Arambol, Goa|15.680|73.700|India|270
+Mulki|13.090|74.780|India|270
+Puducherry|11.930|79.840|India|90
+Sigatoka|-18.170|177.500|Fiji|190
+Ribeira Grande|37.820|-25.520|Azorene|0
+Ostia|41.730|12.280|Italia|220
+St Ouen's Bay|49.230|-2.240|Jersey|270
+Pease Bay|55.930|-2.340|Skottland|40
+Oostende|51.230|2.920|Belgia|330`;
 const WORLD = WORLD_RAW.split("\n").map((l,i)=>{ const [name,lat,lon,region,f,exp,max,q,note] = l.split("|"); const facing = +f;
   return {id:"w"+i, name, lat:+lat, lon:+lon, region, kind:"surf", facing, swell:[(facing+290)%360,(facing+70)%360], tide:"alle",
     exp: exp ? +exp : 1, max: max ? +max : 3.0, q: q ? +q : 1,
